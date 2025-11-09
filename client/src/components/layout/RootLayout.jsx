@@ -8,9 +8,9 @@ export default function RootLayout() {
   return (
     <SidebarProvider className="flex w-full">
       <AppSidebar />
-      <div className="w-full h-dvh">
+      <div className="flex flex-col items-center w-full h-dvh">
         <Header />
-        <main className=" w-full h-full py-6 px-4 z-0">
+        <main className="max-w-7xl w-full h-full px-4 py-6 z-0">
           <Outlet />
         </main>
       </div>

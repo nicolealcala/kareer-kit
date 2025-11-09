@@ -1,32 +1,3 @@
-// import { NavLink } from "react-router-dom";
-
-// const Navbar = () => {
-//   return (
-//     <nav className="p-4 bg-gray-100 flex gap-4">
-//       <NavLink to="/">Dashboard</NavLink>
-//       <NavLink to="/cover-letter">Cover Letter</NavLink>
-//       <NavLink to="/reminders">Reminders</NavLink>
-//       <NavLink to="/applications">Applications</NavLink>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
-
-// import {
-//   Sidebar,
-//   SidebarContent,
-//   SidebarFooter,
-//   SidebarGroup,
-//   SidebarGroupLabel,
-//   SidebarGroupContent,
-//   SidebarMenu,
-//   SidebarMenuButton,
-//   SidebarMenuItem,
-//   SidebarHeader,
-// } from "@/components/ui/sidebar";
-// import { BriefcaseBusiness, CalendarSync, ChartPie } from "lucide-react";
-
 import {
   ChartPie,
   BriefcaseBusiness,
@@ -34,7 +5,6 @@ import {
   CalendarSync,
   PencilRuler,
 } from "lucide-react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -87,15 +57,21 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-0.5">
               {defaultItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
+                  <NavLink
+                    to={item.url}
+                    className={({ isActive }) =>
+                      [
+                        isActive ? "text-indigo-500!" : "text-slate-400!",
+                        "inline-flex w-full gap-x-2 items-center py-1 px-1.5 rounded-md",
+                      ].join(" ")
+                    }
+                  >
+                    <item.icon size={20} />
+                    <span>{item.title}</span>
+                  </NavLink>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -108,12 +84,18 @@ export function AppSidebar() {
             <SidebarMenu>
               {builderItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
+                  <NavLink
+                    to={item.url}
+                    className={({ isActive }) =>
+                      [
+                        isActive ? "text-indigo-500!" : "text-slate-400!",
+                        "inline-flex w-full gap-x-2 items-center py-1 px-1.5 rounded-md",
+                      ].join(" ")
+                    }
+                  >
+                    <item.icon size={20} />
+                    <span>{item.title}</span>
+                  </NavLink>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
