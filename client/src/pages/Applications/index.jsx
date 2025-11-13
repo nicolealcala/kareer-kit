@@ -2,11 +2,7 @@ import CustomSelect from "@/components/customized/CustomSelect";
 import { Input } from "@/components/ui/input";
 import { groupApplicationsByMonth } from "@/lib/utils/date";
 import ApplicationItem from "./ApplicationItem";
-import {
-  mockData,
-  statusFilters,
-  dateItems,
-} from "@/lib/mock-data/applications";
+import { mockData, statusFilters, dateItems } from "@/lib/data/applications";
 
 export default function Applications() {
   const groupedDataEntries = groupApplicationsByMonth(mockData);
@@ -23,11 +19,11 @@ export default function Applications() {
                     year: "numeric",
                   })}
             </p>
-            <ul>
+            <table className="w-full">
               {applications.map((app) => (
                 <ApplicationItem key={app.id} application={app} />
               ))}
-            </ul>
+            </table>
           </li>
         ))}
       </ul>

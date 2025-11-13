@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils/tailwind";
-import { applicationStatuses } from "@/lib/mock-data/applications";
+import { applicationStatuses } from "@/lib/data/applications";
 
 export default function CustomSelect({
   items = [],
