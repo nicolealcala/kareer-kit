@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = () => {
   return (
-    <nav className="sticky top-0 z-90 bg-background w-full p-2 flex justify-between items-center h-16 shadow-sm">
+    <nav className="sticky top-0 z-90 bg-background w-full p-6 pl-5 flex justify-between items-center h-16 shadow-sm">
       <SidebarTrigger className="size-10" />
       <h3 className="font-bold">KareerKit</h3>
       <div className="relative flex gap-x-3 items-center">

@@ -6,11 +6,10 @@ import RootLayout from "./components/layout/RootLayout.jsx";
 import Dashboard from "./pages/Dashboard";
 import Applications from "./pages/Applications";
 import CoverLetter from "./pages/CoverLetter";
-import Reminders from "./pages/Schedule";
+import Resume from "./pages/Resume";
+import Schedule from "./pages/Schedule";
 import NotFound from "./pages/NotFound.jsx";
 import "./index.css";
-import Schedule from "./pages/Schedule";
-import Resume from "./pages/Resume";
 
 const router = createBrowserRouter([
   {

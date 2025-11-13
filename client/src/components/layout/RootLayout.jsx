@@ -10,7 +10,7 @@ export default function RootLayout() {
       <AppSidebar />
       <div className="flex flex-col items-center w-full h-dvh">
         <Header />
-        <main className="max-w-7xl w-full h-full px-4 py-6 z-0">
+        <main className="max-w-7xl w-full h-full p-6 pl-5 py-6 z-0">
           <Outlet />
         </main>
       </div>

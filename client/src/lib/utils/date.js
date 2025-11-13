@@ -17,3 +17,20 @@ export function getMonthsUpToCurrent() {
 
     return months;
 }
+
+export function groupApplicationsByMonth(data) {
+    const groupedData = {};
+    data.sort((a, b) => new Date(b.date) - new Date(a.date));
+    data.forEach(item => {
+        const date = new Date(item.date);
+        const month = date.getMonth();
+        const year = date.getFullYear();
+        const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
+        if (!groupedData[monthKey]) {
+            groupedData[monthKey] = [];
+        }
+        groupedData[monthKey].push(item);
+    });
+
+    return groupedData;
+}

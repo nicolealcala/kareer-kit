@@ -2,8 +2,9 @@ import {
   ChartPie,
   BriefcaseBusiness,
   FileText,
-  CalendarSync,
+  CalendarClock,
   PencilRuler,
+  ChevronsUpDown,
 } from "lucide-react";
 import {
   Sidebar,
@@ -13,10 +14,13 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarHeader,
 } from "@/components/ui/sidebar";
+
 import { NavLink } from "react-router-dom";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
+import { useState } from "react";
 
 // Menu items.
 const defaultItems = [
@@ -33,7 +37,7 @@ const defaultItems = [
   {
     title: "Schedule",
     url: "/schedule",
-    icon: CalendarSync,
+    icon: CalendarClock,
   },
 ];
 
@@ -53,9 +57,10 @@ const builderItems = [
 export function AppSidebar() {
   return (
     <Sidebar>
+      <CustomSidebarHeader />
       <SidebarContent className="px-3">
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
               {defaultItems.map((item) => (
@@ -101,21 +106,68 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
-        {/* <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <NavLink to="/builder" className="flex justify-center bg-primary">
-              <span>Build with AI</span>
-            </NavLink>
-          </SidebarMenuButton>
-        </SidebarMenuItem> */}
       </SidebarContent>
-      <SidebarFooter className="inline text-muted-foreground">
-        From&nbsp;
+      <SidebarFooter className="px-6 inline text-muted-foreground">
+        from&nbsp;
         <a href="https://clinoae.is-a.dev" target="_blank">
           @clinoae
         </a>
       </SidebarFooter>
     </Sidebar>
+  );
+}
+
+function CustomSidebarHeader() {
+  const periods = [
+    { year: "2025", organization: { img: "", name: "" } },
+    {
+      year: "2024",
+      organization: {
+        img: "https://lh3.googleusercontent.com/IgRKLuNUXam-9GZOCWXTmIN_WXJS86BrE0RdvBdcy9dL-omOL4lDpETzMtN38QgF84fnjn5Ruy3TjgHbyvo=s280",
+        name: "WPH Digital Pte Ltd",
+      },
+    },
+    { year: "2023", organization: { img: "", name: "" } },
+    { year: "2022", organization: { img: "", name: "" } },
+  ];
+  const [period, setPeriod] = useState(periods[0]);
+
+  return (
+    <SidebarHeader className="p-0">
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <Select value={period} onValueChange={setPeriod}>
+            <SelectTrigger
+              className="w-full h-max! rounded-none!"
+              arrow={<ChevronsUpDown size={16} />}
+            >
+              <div className="flex gap-x-4">
+                <img
+                  src={
+                    period.organization.img ||
+                    "https://www.svgrepo.com/show/508699/landscape-placeholder.svg"
+                  }
+                  alt="Organization Image"
+                  className="size-10 object-contain rounded-full"
+                />
+                <div className="flex flex-col items-start">
+                  <span className="text-sm">
+                    {period.organization.name || "Unemployed"}
+                  </span>
+                  <span className="text-xs">{period.year}</span>
+                </div>
+              </div>
+            </SelectTrigger>
+            <SelectContent className="w-[90%]">
+              {periods.map((p) => (
+                <SelectItem key={p.year} value={p} className="max-w-[90%]">
+                  {p.year}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </SidebarHeader>
   );
 }
