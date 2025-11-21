@@ -20,7 +20,7 @@ function CustomDropdown({ items, trigger, align, ...props }) {
         {items.map((item) => (
           <DropdownMenuItem
             key={item.label}
-            className={cn(item.color ?? "text-slate-500", "items-center")}
+            className={cn(item.color ?? "", "items-center")}
           >
             {item.icon} <span className="font-medium">{item.label}</span>
           </DropdownMenuItem>

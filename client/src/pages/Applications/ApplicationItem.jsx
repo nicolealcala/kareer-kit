@@ -15,11 +15,19 @@ import WorkSetupBadge from "./WorkSetupBadge";
 const applicationMenuItems = [
   {
     label: "Delete",
-    icon: <Trash2 color="#fb2c36" />,
-    color: "bg-red-50 text-red-500!",
+    icon: <Trash2 className="text-red-500" />,
+    color: "hover:bg-red-50 text-red-500!",
   },
-  { label: "Archive", icon: <Archive /> },
-  { label: "Description", icon: <ChevronRight /> },
+  {
+    label: "Archive",
+    icon: <Archive className="text-slate-700" />,
+    color: "text-slate-700!",
+  },
+  {
+    label: "Description",
+    icon: <ChevronRight className="text-slate-700" />,
+    color: "text-slate-700!",
+  },
 ];
 
 export default function ApplicationItem({ application }) {
@@ -32,7 +40,7 @@ export default function ApplicationItem({ application }) {
   );
   return (
     <tr className="flex w-full gap-x-3 max-w-full items-center rounded-md p-3 shadow-sm border text-foreground/75">
-      <td className="flex flex-1 items-center text-foreground/50">
+      <td className="flex flex-1 items-center text-foreground/50 text-xs">
         {applicationDate}
       </td>
       <td className="flex flex-1 min-w-[250px] items-center font-medium">
