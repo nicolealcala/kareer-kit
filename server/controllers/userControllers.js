@@ -1,4 +1,5 @@
 import { prisma } from "../lib/prisma.js";
+import { User } from "../lib/zod/userSchemaValidator.js";
 
 const CONTENT_STATUS = {
     fulfilled: "FULFILLED",
@@ -13,9 +14,16 @@ export function getUsersHandler(req, res) {
 }
 
 export function createUserHandler(req, res) {
-    const { name, email, country, passwordHash } = req.body;
+    const validationResult = User.safeParse(req.body);
+
+    if (!validationResult.success) {
+        return res.status(400).json({ error: validationResult.error, message: "Invalid user data" });
+    }
+
+    const userData = validationResult.data;
+
     prisma.user.create({
-        data: { name, email, country, passwordHash }
+        data: userData
     }).then(user => {
         res.status(201).json(user);
     }).catch(err => {
@@ -25,6 +33,7 @@ export function createUserHandler(req, res) {
 
 export function getUserByIdHandler(req, res) {
     const { id } = req.params;
+
     prisma.user.findUnique({
         where: { id }
     }).then(user => {
@@ -36,11 +45,18 @@ export function getUserByIdHandler(req, res) {
 
 export function updateUserHandler(req, res) {
     const { id } = req.params;
-    const { name, email, country, passwordHash } = req.body;
+
+    const validationResult = User.safeParse(req.body);
+
+    if (!validationResult.success) {
+        return res.status(400).json({ error: validationResult.error, message: "Invalid user data" });
+    }
+
+    const userData = validationResult.data;
 
     prisma.user.update({
         where: { id },
-        data: { name, email, country, passwordHash }
+        data: userData
     }).then(user => {
         res.status(204).json(user);
     }).catch(err => {
