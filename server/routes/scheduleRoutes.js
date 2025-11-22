@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createScheduleHandler, deleteScheduleHandler, getScheduleByIdHandler, getSchedulesHandler, updateScheduleHandler } from "../controllers/scheduleControllers";
 
 const scheduleRouter = Router();
 
@@ -8,8 +9,10 @@ scheduleRouter.use((req, res, next) => {
     next();
 });
 
-scheduleRouter.get("/", (req, res) => {
-    res.send("Schedule route is working");
-});
+scheduleRouter.get("/", getSchedulesHandler);
+scheduleRouter.post("/", createScheduleHandler);
+scheduleRouter.get("/:id", getScheduleByIdHandler);
+scheduleRouter.put("/:id", updateScheduleHandler);
+scheduleRouter.delete("/:id", deleteScheduleHandler);
 
 export default scheduleRouter;

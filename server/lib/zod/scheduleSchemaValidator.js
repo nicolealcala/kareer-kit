@@ -12,4 +12,5 @@ export const Schedule = z.object({
     type: z.enum(['INTERVIEW', 'ASSESSMENT', 'FOLLOW_UP', 'TASK', 'OTHER']),
     notes: z.string().optional(),
     isCompleted: z.boolean(),
+    applicationId: z.string().optional(),
 });
