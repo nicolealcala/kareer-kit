@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
@@ -31,15 +31,23 @@ enum ApplicationStatus {
   WITHDRAWN
 }
 
+enum ScheduleType {
+  INTERVIEW
+  ASSESSMENT
+  FOLLOW_UP
+  TASK
+  OTHER
+}
+
 model User {
-  id            String   @id @default(uuid())
-  email         String   @unique
-  name          String?
-  settings      Json?
-  country       String?
-  password_hash String   @map("password_hash")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String?
+  settings     Json?
+  country      Json?
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   applications      Application[]
   schedules         Schedule[]
@@ -92,16 +100,16 @@ model Application {
 }
 
 model Schedule {
-  id          String   @id @default(uuid())
+  id          String        @id @default(uuid())
   title       String
   description String?
-  scheduledAt DateTime @map("scheduled_at")
+  scheduledAt DateTime      @map("scheduled_at")
   location    Json?
-  type        String?
+  type        ScheduleType? @default(INTERVIEW)
   notes       String?
-  isCompleted Boolean  @default(false) @map("is_completed")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  isCompleted Boolean       @default(false) @map("is_completed")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @map("user_id")
