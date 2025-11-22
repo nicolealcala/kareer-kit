@@ -11,4 +11,7 @@ app.use('/api/employment-records', employmentRecordRouter);
 app.use('/api/applications', applicationRouter);
 app.use('/api/schedules', scheduleRouter)
 
+app.use((req, res) => {
+    res.status(404).json({ error: "Not Found" });
+});
 app.listen(3000, () => console.log("LISTENING TO PORT 3000"));
