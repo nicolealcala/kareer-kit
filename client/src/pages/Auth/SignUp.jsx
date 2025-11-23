@@ -53,7 +53,7 @@ function SignUp() {
                     id="first_name"
                     disabled={isSubmitting}
                     aria-invalid={fieldState.invalid}
-                    placeholder=""
+                    placeholder="John"
                     autoComplete="off"
                   />
                   {fieldState.invalid && (
@@ -74,7 +74,7 @@ function SignUp() {
                     id="last_name"
                     disabled={isSubmitting}
                     aria-invalid={fieldState.invalid}
-                    placeholder=""
+                    placeholder="Doe"
                     autoComplete="off"
                   />
                   {fieldState.invalid && (
@@ -117,7 +117,7 @@ function SignUp() {
                   id="password"
                   disabled={isSubmitting}
                   aria-invalid={fieldState.invalid}
-                  placeholder=""
+                  placeholder="Password"
                   autoComplete="off"
                 />
                 {fieldState.invalid && (
@@ -133,7 +133,7 @@ function SignUp() {
           size="lg"
           disabled={isSubmitting}
         >
-          Signup
+          Sign up
         </Button>
 
         <OAuth />

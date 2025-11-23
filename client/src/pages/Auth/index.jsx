@@ -16,13 +16,13 @@ function Auth() {
             value="login"
             className="data-[state=active]:bg-primary data-[state=active]:text-background"
           >
-            Login
+            Sign in
           </TabsTrigger>
           <TabsTrigger
             value="signup"
             className="data-[state=active]:bg-primary data-[state=active]:text-background"
           >
-            Signup
+            Sign up
           </TabsTrigger>
         </TabsList>
         <TabsContent value="login">

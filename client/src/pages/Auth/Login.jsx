@@ -83,7 +83,7 @@ function Login(props) {
                   id="password"
                   disabled={isSubmitting}
                   aria-invalid={fieldState.invalid}
-                  placeholder="Login button not working on mobile"
+                  placeholder="Password"
                   autoComplete="off"
                 />
                 {fieldState.invalid && (
@@ -102,7 +102,7 @@ function Login(props) {
           size="lg"
           disabled={isSubmitting}
         >
-          Login
+          Sign in
         </Button>
       </form>
 
@@ -115,7 +115,7 @@ function Login(props) {
           className="text-primary font-medium"
           onClick={() => props.setActiveTab("signup")}
         >
-          Signup
+          Sign up
         </span>
       </div>
     </section>
