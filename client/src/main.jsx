@@ -10,6 +10,8 @@ import Resume from "./pages/Resume";
 import Schedule from "./pages/Schedule";
 import NotFound from "./pages/NotFound.jsx";
 import "./index.css";
+import SignUp from "./pages/Auth/SignUp";
+import Login from "./pages/Auth/Login";
 
 const router = createBrowserRouter([
   {
@@ -23,7 +25,10 @@ const router = createBrowserRouter([
       { path: "/cover-letter", element: <CoverLetter /> },
     ],
   },
-  { path: "/auth", element: <Auth /> },
+  {
+    path: "/auth",
+    element: <Auth />,
+  },
   { path: "*", element: <NotFound /> },
 ]);
 createRoot(document.getElementById("root")).render(

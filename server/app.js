@@ -6,6 +6,11 @@ import employmentRecordRouter from './routes/employmentRecordRoutes.js';
 
 const app = express();
 
+export const CONTENT_STATUS = {
+    fulfilled: "FULFILLED",
+    empty: "EMPTY"
+}
+
 app.use('/api/users', userRouter);
 app.use('/api/employment-records', employmentRecordRouter);
 app.use('/api/applications', applicationRouter);

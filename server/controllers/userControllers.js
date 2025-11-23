@@ -1,10 +1,7 @@
 import { prisma } from "../lib/prisma.js";
 import { User } from "../lib/zod/userSchemaValidator.js";
+import { CONTENT_STATUS } from "../app.js";
 
-const CONTENT_STATUS = {
-    fulfilled: "FULFILLED",
-    empty: "EMPTY"
-}
 export function getUsersHandler(req, res) {
     prisma.user.findMany().then(users => {
         res.json({ users, status: users.length > 0 ? CONTENT_STATUS.fulfilled : CONTENT_STATUS.empty });
