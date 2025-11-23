@@ -1,4 +1,3 @@
-import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
@@ -12,6 +11,8 @@ import {
 import { Input } from "@/components/ui/input";
 import OAuth from "./OAuthButton";
 import { NavLink } from "react-router-dom";
+// import { supabase } from "@/lib/config/supabaseClient";
+// import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.email("Please enter a valid email address."),
@@ -29,10 +30,23 @@ function Login(props) {
 
   const { isSubmitting } = form.formState;
 
-  function onSubmit(data) {
-    setTimeout(() => {
-      console.log(data);
-    }, 2000);
+  async function onSubmit(formData) {
+    return formData;
+    // const { data, error } = await supabase.auth.signInWithPassword({
+    //   email: formData.email,
+    //   password: formData.password,
+    // });
+    // if (error) toast.error(error.message);
+    // fetch("/api/me", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     access_token: data.session.access_token,
+    //     refresh_token: data.session.refresh_token,
+    //   }),
+    // });
   }
   return (
     <section className="w-sm flex flex-col h-fit">

@@ -2,7 +2,6 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Login from "./Login";
 import SignUp from "./SignUp";
-
 function Auth() {
   const [activeTab, setActiveTab] = React.useState("login");
   return (
