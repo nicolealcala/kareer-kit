@@ -1,10 +1,6 @@
 import { prisma } from "../lib/prisma.js";
 import { Application } from "../lib/zod/applicationSchemaValidator.js";
-
-const CONTENT_STATUS = {
-    fulfilled: "FULFILLED",
-    empty: "EMPTY"
-}
+import { CONTENT_STATUS } from "../app.js";
 
 export function getApplicationsHandler(req, res) {
     const { userId } = req.query;

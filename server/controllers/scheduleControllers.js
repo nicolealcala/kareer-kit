@@ -1,10 +1,6 @@
 import { prisma } from "../lib/prisma";
 import { Schedule } from "../lib/zod/scheduleSchemaValidator";
-
-const CONTENT_STATUS = {
-    fulfilled: "FULFILLED",
-    empty: "EMPTY"
-}
+import { CONTENT_STATUS } from "../app.js";
 
 export function getSchedulesHandler(req, res) {
     const { userId } = req.query;
