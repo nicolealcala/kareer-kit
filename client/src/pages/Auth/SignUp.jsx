@@ -11,9 +11,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import OAuth from "./OAuthButton";
-import { Separator } from "@/components/ui/separator";
-import { NavLink } from "react-router-dom";
-
+// import { supabase } from "@/lib/config/supabaseClient";
 const formSchema = z.object({
   first_name: z.string().min(2).max(100),
   last_name: z.string().min(2).max(100),
@@ -34,8 +32,18 @@ function SignUp() {
 
   const { isSubmitting } = form.formState;
 
-  function onSubmit(data) {
-    console.log(data);
+  async function onSubmit(userData) {
+    // const { data, error } = await supabase.auth.signUp({
+    //   email: userData.email,
+    //   password: userData.password,
+    //   options: {
+    //     data: {
+    //       first_name: userData.first_name,
+    //       last_name: userData.last_name,
+    //     },
+    //   },
+    // });
+    console.log(userData);
   }
   return (
     <section className="w-sm flex flex-col h-fit">
