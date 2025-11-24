@@ -1,6 +1,6 @@
 export default function Loader() {
   return (
-    <div className="flex w-full h-full justify-center items-center">
+    <div className="flex w-full h-dvh justify-center items-center">
       <div className="relative w-12 h-12 mx-auto">
         {/* Shadow */}
         <div
