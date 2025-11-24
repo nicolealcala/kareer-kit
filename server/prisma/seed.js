@@ -2,9 +2,8 @@ import { ALL_PERMISSIONS } from '../config/permissions.js'
 import { roles } from '../config/roles.js'
 import { prisma } from '../lib/prisma.js'
 
-
 async function main() {
-    //Create permissions
+    // 1️⃣ Create / upsert all permissions
     for (const permission of ALL_PERMISSIONS) {
         await prisma.permission.upsert({
             where: { name: permission.name },
@@ -16,14 +15,14 @@ async function main() {
         })
     }
 
-    //Create roles
+    // 2️⃣ Create / upsert all roles
     for (const role of roles) {
         await prisma.role.upsert({
             where: { name: role.name },
             update: {
-                description: roleData.description,
+                description: role.description,
                 permissions: {
-                    connect: roleData.permissions.map(p => ({ name: p.name })),
+                    connect: role.permissions.map((p) => ({ name: p.name })),
                 },
             },
             create: {
@@ -36,14 +35,15 @@ async function main() {
         })
     }
 
+    console.log('Roles and permissions seeded successfully!')
 }
 
+// Run the seed script
 main()
-    .then(async () => {
-        await prisma.$disconnect()
-    })
-    .catch(async (e) => {
+    .catch((e) => {
         console.error(e)
-        await prisma.$disconnect()
         process.exit(1)
+    })
+    .finally(async () => {
+        await prisma.$disconnect()
     })
