@@ -10,11 +10,10 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import OAuth from "./OAuthButton";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import PasswordInput from "@/components/customized/PasswordInput";
 import AuthError from "./AuthError";
-// import { supabase } from "@/lib/config/supabaseClient";
-// import { toast } from "sonner";
+import { supabase } from "@/lib/config/supabaseClient";
 
 const formSchema = z.object({
   email: z.email("Enter a valid email address"),
@@ -25,6 +24,7 @@ const formSchema = z.object({
 });
 
 function Login(props) {
+  const navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -36,22 +36,17 @@ function Login(props) {
   const { isSubmitting } = form.formState;
 
   async function onSubmit(formData) {
-    return formData;
-    // const { data, error } = await supabase.auth.signInWithPassword({
-    //   email: formData.email,
-    //   password: formData.password,
-    // });
-    // if (error) toast.error(error.message);
-    // fetch("/api/me", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     access_token: data.session.access_token,
-    //     refresh_token: data.session.refresh_token,
-    //   }),
-    // });
+    const { _, error } = await supabase.auth.signInWithPassword({
+      email: formData.email,
+      password: formData.password,
+    });
+
+    if (error) {
+      props.setAuthError(error.message);
+      return;
+    }
+
+    navigate("/");
   }
   return (
     <section className="w-sm flex flex-col h-fit">

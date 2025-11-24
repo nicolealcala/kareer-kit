@@ -62,7 +62,6 @@ function SignUp(props) {
     });
 
     if (error) {
-      console.error("Error signing up:", error.message);
       props.setSignUpError(error.message);
       return;
     }
