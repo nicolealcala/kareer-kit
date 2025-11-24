@@ -13,14 +13,28 @@ import { Input } from "@/components/ui/input";
 import OAuth from "./OAuthButton";
 import { toast } from "sonner";
 import { supabase } from "@/lib/config/supabaseClient";
+import PasswordInput from "@/components/customized/PasswordInput";
+import AuthError from "./AuthError";
+
 const formSchema = z.object({
-  first_name: z.string().min(2, "First name is required").max(100),
-  last_name: z.string().min(2, "Last name is required").max(100),
-  email: z.email("Please enter a valid email address."),
-  password: z.string(),
+  first_name: z
+    .string()
+    .nonempty("First name is required")
+    .min(2, "Must be at least 2 characters")
+    .max(100),
+  last_name: z
+    .string()
+    .nonempty("Last name is required")
+    .min(2, "Must be at least 2 characters")
+    .max(100),
+  email: z.email("Enter a valid email address"),
+  password: z
+    .string()
+    .nonempty("Password is required")
+    .min(6, "Must be at least 6 characters"),
 });
 
-function SignUp() {
+function SignUp(props) {
   const navigate = useNavigate();
 
   const form = useForm({
@@ -49,7 +63,7 @@ function SignUp() {
 
     if (error) {
       console.error("Error signing up:", error.message);
-      toast.error(`Error signing up: ${error.message}`);
+      props.setSignUpError(error.message);
       return;
     }
 
@@ -92,7 +106,10 @@ function SignUp() {
                     autoComplete="off"
                   />
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      errors={[fieldState.error]}
+                      className="text-xs"
+                    />
                   )}
                 </Field>
               )}
@@ -113,7 +130,10 @@ function SignUp() {
                     autoComplete="off"
                   />
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      errors={[fieldState.error]}
+                      className="text-xs"
+                    />
                   )}
                 </Field>
               )}
@@ -135,7 +155,7 @@ function SignUp() {
                   autoComplete="off"
                 />
                 {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
+                  <FieldError errors={[fieldState.error]} className="text-xs" />
                 )}
               </Field>
             )}
@@ -147,22 +167,21 @@ function SignUp() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid} className="gap-y-2!">
                 <FieldLabel htmlFor="password">Password</FieldLabel>
-                <Input
-                  {...field}
-                  id="password"
-                  type="passsword "
-                  disabled={isSubmitting}
-                  aria-invalid={fieldState.invalid}
-                  placeholder="Password"
-                  autoComplete="off"
+                <PasswordInput
+                  field={field}
+                  isSubmitting={isSubmitting}
+                  fieldState={fieldState}
                 />
+
                 {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
+                  <FieldError errors={[fieldState.error]} className="text-xs" />
                 )}
               </Field>
             )}
           />
         </FieldGroup>
+
+        {props.authError && <AuthError authError={props.authError} />}
         <Button
           type="submit"
           className="w-full mt-6"

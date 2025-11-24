@@ -11,12 +11,17 @@ import {
 import { Input } from "@/components/ui/input";
 import OAuth from "./OAuthButton";
 import { NavLink } from "react-router-dom";
+import PasswordInput from "@/components/customized/PasswordInput";
+import AuthError from "./AuthError";
 // import { supabase } from "@/lib/config/supabaseClient";
 // import { toast } from "sonner";
 
 const formSchema = z.object({
-  email: z.email("Please enter a valid email address."),
-  password: z.string().min(6, "Password is required"),
+  email: z.email("Enter a valid email address"),
+  password: z
+    .string()
+    .nonempty("Password is required")
+    .min(6, "Must be at least 6 characters"),
 });
 
 function Login(props) {
@@ -67,7 +72,7 @@ function Login(props) {
                   autoComplete="off"
                 />
                 {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
+                  <FieldError errors={[fieldState.error]} className="text-xs" />
                 )}
               </Field>
             )}
@@ -78,24 +83,25 @@ function Login(props) {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid} className="gap-y-2!">
                 <FieldLabel htmlFor="password">Password</FieldLabel>
-                <Input
-                  {...field}
-                  id="password"
-                  disabled={isSubmitting}
-                  aria-invalid={fieldState.invalid}
-                  placeholder="Password"
-                  autoComplete="off"
+                <PasswordInput
+                  field={field}
+                  isSubmitting={isSubmitting}
+                  fieldState={fieldState}
                 />
                 {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
+                  <FieldError errors={[fieldState.error]} className="text-xs" />
                 )}
               </Field>
             )}
           />
+
           <NavLink to="/auth/forgot-password" className="text-sm font-medium">
             Forgot password?
           </NavLink>
         </FieldGroup>
+
+        {props.authError && <AuthError authError={props.authError} />}
+
         <Button
           type="submit"
           className="w-full mt-4"
