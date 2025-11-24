@@ -62,7 +62,7 @@ function SignUp(props) {
     });
 
     if (error) {
-      props.setSignUpError(error.message);
+      props.setAuthError(error.message);
       return;
     }
 
