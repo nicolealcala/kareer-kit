@@ -5,7 +5,7 @@ import {
     getApplicationByIdHandler,
     getApplicationsHandler,
     updateApplicationHandler
-} from "../controllers/applicationControllers";
+} from "../controllers/applicationControllers.js";
 
 const applicationRouter = Router();
 

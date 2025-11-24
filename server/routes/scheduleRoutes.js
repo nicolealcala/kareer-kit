@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createScheduleHandler, deleteScheduleHandler, getScheduleByIdHandler, getSchedulesHandler, updateScheduleHandler } from "../controllers/scheduleControllers";
+import { createScheduleHandler, deleteScheduleHandler, getScheduleByIdHandler, getSchedulesHandler, updateScheduleHandler } from "../controllers/scheduleControllers.js";
 
 const scheduleRouter = Router();
 
