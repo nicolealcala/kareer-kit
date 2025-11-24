@@ -1,5 +1,5 @@
-import { prisma } from "../lib/prisma";
-import { Schedule } from "../lib/zod/scheduleSchemaValidator";
+import { prisma } from "../lib/prisma.js";
+import { Schedule } from "../lib/zod/scheduleSchemaValidator.js";
 import { CONTENT_STATUS } from "../app.js";
 
 export function getSchedulesHandler(req, res) {
