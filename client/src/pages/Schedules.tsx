@@ -2,9 +2,22 @@ import ScheduleCalendar from "@/components/schedules/Calendar";
 import Box from "@mui/material/Box";
 import SchedulesSkeleton from "@/components/schedules/SchedulesSkeleton";
 import { useSchedulesData } from "@/utils/hooks/useSchedules";
+import { useScheduleStore } from "@/store/schedules/scheduleStore";
+import { useEffect } from "react";
 
 export default function SchedulesPage() {
-  const { schedules, isLoading, error } = useSchedulesData();
+  const view = useScheduleStore((state) => state.view);
+  const currentDate = useScheduleStore((state) => state.currentDate);
+  const resetUI = useScheduleStore((state) => state.resetUI);
+
+  useEffect(() => {
+    resetUI();
+  }, [resetUI]);
+
+  const { schedules, isLoading, error } = useSchedulesData({
+    view,
+    currentDate,
+  });
 
   if (isLoading) return <SchedulesSkeleton />;
 
