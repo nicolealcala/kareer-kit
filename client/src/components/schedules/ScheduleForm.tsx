@@ -23,14 +23,15 @@ import scheduleFormSchema, {
 import FormButtons from "../shared/form/FormButtons";
 import { useScheduleStore } from "@/store/schedules/scheduleStore";
 import useShallowStore from "@/store/useShallowStore";
-import { DateTime } from "luxon";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import Button from "@mui/material/Button";
 import { secondaryButtonSx } from "@/utils/styles";
+import ControlledFormCheckbox from "../shared/form/ControlledFormCheckbox";
+import { DateTime } from "luxon";
 
 const modalityOptions = [
-  { value: "remote", label: "Remote" },
-  { value: "onsite", label: "In-Person" },
+  { value: "virtual", label: "Remote" },
+  { value: "in_person", label: "In-Person" },
 ];
 
 const typeValues = [
@@ -47,24 +48,25 @@ export default function ScheduleForm({ handleDelete }: ScheduleFormProps) {
   const {
     drawerMode,
     selectedEvent,
-    date,
+    currentDate,
     createStart,
     createEnd,
     closeDrawer,
   } = useShallowStore(useScheduleStore, (state) => ({
     drawerMode: state.drawerMode,
     selectedEvent: state.selectedEvent,
-    date: state.date,
+    currentDate: state.currentDate,
     createStart: state.createStart,
     createEnd: state.createEnd,
     closeDrawer: state.closeDrawer,
   }));
-  
+
   const {
     reset,
     resetField,
     control,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<ScheduleFormInputs>({
     resolver: zodResolver(scheduleFormSchema),
@@ -82,6 +84,8 @@ export default function ScheduleForm({ handleDelete }: ScheduleFormProps) {
     control,
     name: "date",
   });
+
+  const isAllDay = useWatch({ control, name: "isAllDay" });
 
   useEffect(() => {
     if (drawerMode === "update" && selectedEvent) {
@@ -105,16 +109,38 @@ export default function ScheduleForm({ handleDelete }: ScheduleFormProps) {
 
       reset({
         ...initialValues,
-        date: DateTime.fromJSDate(date).toISO() ?? "",
+        date: startIsoString,
         start: startIsoString,
         end: endIsoString,
       });
     }
-  }, [drawerMode, selectedEvent, date, createStart, createEnd, reset]);
+  }, [drawerMode, selectedEvent, currentDate, createStart, createEnd, reset]);
 
   useEffect(() => {
-    if (modality === "remote") resetField("address");
-    if (modality === "onsite") resetField("link");
+    if (!isAllDay) return;
+
+    const base = (
+      selectedDate ? DateTime.fromISO(selectedDate) : DateTime.now()
+    ).toLocal();
+    if (!base.isValid) return;
+
+    const startOfDay = base.startOf("day");
+    const endOfDay = base.endOf("day");
+
+    console.log("[isAllDay effect]", {
+      selectedDate,
+      baseZone: base.zoneName,
+      startISO: startOfDay.toISO(),
+      endISO: endOfDay.toISO(),
+    });
+
+    setValue("start", startOfDay.toISO()!, { shouldValidate: true });
+    setValue("end", endOfDay.toISO()!, { shouldValidate: true });
+  }, [isAllDay, selectedDate, setValue]);
+
+  useEffect(() => {
+    if (modality === "virtual") resetField("address");
+    if (modality === "in_person") resetField("link");
   }, [modality, resetField]);
 
   const { saveSchedule, isDeleting } = useSchedulesData();
@@ -206,14 +232,31 @@ export default function ScheduleForm({ handleDelete }: ScheduleFormProps) {
           className="thin-scrollbar"
         >
           <Stack spacing={4}>
-            <ControlledFormTextField
-              name="title"
-              control={control}
-              label="Title"
-              error={!!errors.title}
-              placeholder="Event title"
-            />
-
+            <Stack direction="row" spacing={2}>
+              <Box sx={{ flex: 7, minWidth: 0 }}>
+                <ControlledFormTextField
+                  name="title"
+                  control={control}
+                  label="Title"
+                  error={!!errors.title}
+                  placeholder="Event title"
+                />
+              </Box>
+              <Box
+                sx={{
+                  flex: 3,
+                  minWidth: 0,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <ControlledFormCheckbox
+                  name="isAllDay"
+                  control={control}
+                  label="All day event"
+                />
+              </Box>
+            </Stack>
             <Stack direction="row" spacing={2}>
               <Controller
                 name="date"
@@ -227,7 +270,6 @@ export default function ScheduleForm({ handleDelete }: ScheduleFormProps) {
                   />
                 )}
               />
-
               <Controller
                 name="start"
                 control={control}
@@ -238,6 +280,7 @@ export default function ScheduleForm({ handleDelete }: ScheduleFormProps) {
                     errorMessage={errors.start?.message}
                     label="Start Time"
                     baseDate={selectedDate}
+                    disabled={isAllDay}
                   />
                 )}
               />
@@ -252,6 +295,7 @@ export default function ScheduleForm({ handleDelete }: ScheduleFormProps) {
                     watchName="start"
                     label="End Time"
                     baseDate={selectedDate}
+                    disabled={isAllDay}
                     error={!!errors.end}
                     errorMessage={errors.end?.message}
                   />
@@ -281,7 +325,7 @@ export default function ScheduleForm({ handleDelete }: ScheduleFormProps) {
               />
             </Stack>
 
-            {modality === "remote" ? (
+            {modality === "virtual" ? (
               <ControlledFormTextField
                 name="link"
                 control={control}
