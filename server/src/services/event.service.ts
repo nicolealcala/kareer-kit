@@ -25,11 +25,15 @@ export default class EventService {
       );
   }
 
-  updateById(userId: RequiredTextData, data: UpdateEventData) {
+  updateById(
+    userId: RequiredTextData,
+    eventId: RequiredTextData,
+    data: UpdateEventData,
+  ) {
     return db
       .update(events)
       .set(data)
-      .where(and(eq(events.userId, userId), eq(events.id, data.id)))
+      .where(and(eq(events.userId, userId), eq(events.id, eventId)))
       .returning();
   }
 
