@@ -12,21 +12,24 @@ export function getCurrentYear() {
  * @param end
  * @returns
  */
-function convertDateToLocale(start: string, end: string) {
-  const localeDateTime = {
-    localeStart: {
-      date: new Date(start).toLocaleDateString(),
-      time: new Date(start).getHours(),
-      day: new Date(start).getDay(),
-    },
-    localeEnd: {
-      date: new Date(end).toLocaleString(),
-      time: new Date(end).getHours(),
-      day: new Date(end).getDay(),
-    },
-  };
+function convertDateToLocale(start: string, end: string | null) {
+  const localeStartDate = new Date(start);
+  const localeEndDate = end ? new Date(end) : null;
 
-  return localeDateTime;
+  return {
+    localeStart: {
+      date: localeStartDate.toLocaleDateString(),
+      time: localeStartDate.getHours(),
+      day: localeStartDate.getDay(),
+    },
+    localeEnd: localeEndDate
+      ? {
+          date: localeEndDate.toLocaleDateString(),
+          time: localeEndDate.getHours(),
+          day: localeEndDate.getDay(),
+        }
+      : null,
+  };
 }
 
 /**
@@ -38,15 +41,14 @@ function convertDateToLocale(start: string, end: string) {
  */
 export function transformWeeklySchedules(data: Schedule[]) {
   return data.map((d) => {
-    const { start, end } = d;
-
-    const { localeStart, localeEnd } = convertDateToLocale(start, end);
+    const { startAt, endAt } = d;
+    const { localeStart, localeEnd } = convertDateToLocale(startAt, endAt);
 
     return {
       title: d.title,
       day: localeStart.day,
       start: localeStart.time,
-      end: localeEnd.time,
+      end: localeEnd?.time ?? null,
     };
   });
 }
@@ -64,11 +66,20 @@ export function convertDateToIso(date: Date | string) {
 export function toCalendarEvent(event: Schedule): CalendarEvent | null {
   if (!event.id) return null;
 
+  const start = DateTime.fromISO(event.startAt).toJSDate();
+  const end = event.endAt ? DateTime.fromISO(event.endAt).toJSDate() : start;
+
+  const isShortEvent = end.getTime() - start.getTime() <= 30 * 60 * 1000;
+
   return {
     ...event,
     id: event.id,
-    start: DateTime.fromISO(event.start).toJSDate(),
-    end: DateTime.fromISO(event.end).toJSDate(),
+    start: DateTime.fromISO(event.startAt).toJSDate(),
+    end: event.endAt
+      ? DateTime.fromISO(event.endAt).toJSDate()
+      : DateTime.fromISO(event.startAt).toJSDate(),
+    allDay: event.isAllDay,
+    isShortEvent,
   };
 }
 
@@ -83,4 +94,43 @@ export function formatShortenedLocaleDate(dateString: string) {
     month: "short",
     day: "numeric",
   });
+}
+
+/**
+ * Function to calcaulte duration of an event
+ * @param start
+ * @param end
+ * @param { step: number, approxPrefix: string }
+ * @returns string
+ */
+
+type DurationOptions = {
+  step?: number;
+  approxPrefix?: string;
+};
+
+export function formatDuration(
+  start: DateTime | Date,
+  end: DateTime | Date,
+  { step = 5, approxPrefix = "approx" }: DurationOptions = {},
+): string {
+  const s = start instanceof Date ? DateTime.fromJSDate(start) : start;
+  const e = end instanceof Date ? DateTime.fromJSDate(end) : end;
+
+  const totalMinutes = e.diff(s, "minutes").minutes;
+  if (!Number.isFinite(totalMinutes) || totalMinutes <= 0) return "";
+
+  const rounded = Math.round(totalMinutes / step) * step;
+  const isApprox = rounded !== totalMinutes;
+
+  const hours = Math.floor(rounded / 60);
+  const minutes = rounded % 60;
+
+  const parts: string[] = [];
+  if (hours > 0) parts.push(`${hours} ${hours === 1 ? "hour" : "hours"}`);
+  if (minutes > 0)
+    parts.push(`${minutes} ${minutes === 1 ? "minute" : "minutes"}`);
+
+  const label = parts.join(" ") || "0 minutes";
+  return isApprox ? `${approxPrefix} ${label}` : label;
 }

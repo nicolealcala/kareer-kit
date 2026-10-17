@@ -9,11 +9,12 @@ type ScheduleChipProps = ChipProps & {
 export default function ScheduleChip({ label, sx }: ScheduleChipProps) {
   return (
     <Chip
-      label={label}
+      label={label.replace("_", "-")}
       size="small"
       variant="outlined"
       sx={{
         fontSize: "0.65rem",
+        fontWeight: 600,
         textTransform: "uppercase",
         color: "background.paper",
         bgcolor:

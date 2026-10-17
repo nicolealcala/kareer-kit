@@ -1,9 +1,11 @@
 import {
+  amber,
   blue,
   blueGrey,
   cyan,
   green,
   grey,
+  indigo,
   lightBlue,
   pink,
   purple,
@@ -13,9 +15,11 @@ import {
 } from "@mui/material/colors";
 
 export const eventColors = {
-  interview: blue,
+  meeting: indigo,
+  interview: purple,
   assessment: pink,
-  task: purple,
+  task: amber,
+  follow_up: blue,
   other: teal,
 };
 

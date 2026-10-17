@@ -16,6 +16,8 @@ import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import InsertLinkRoundedIcon from "@mui/icons-material/InsertLinkRounded";
 import Chip from "@mui/material/Chip";
 import { deleteButtonSx } from "@/utils/styles";
+import { formatDuration } from "@/utils/date";
+import Span from "../shared/typography/Span";
 
 type EventPopoverProps = {
   selectedEvent: CalendarEvent | null;
@@ -39,23 +41,7 @@ export default function EventPopover({
   const openUpdateDrawer = useScheduleStore((state) => state.openUpdateDrawer);
   const duration =
     selectedEvent?.start && selectedEvent?.end
-      ? (() => {
-          const start = DateTime.fromJSDate(selectedEvent.start);
-          const end = DateTime.fromJSDate(selectedEvent.end);
-          const duration = end.diff(start, ["hours", "minutes"]).toObject();
-
-          const hours = duration.hours ?? 0;
-          const minutes = duration.minutes ?? 0;
-
-          return [
-            hours > 0 ? `${hours} ${hours === 1 ? "hour" : "hours"}` : "",
-            minutes > 0
-              ? `${minutes} ${minutes === 1 ? "minute" : "minutes"}`
-              : "",
-          ]
-            .filter(Boolean)
-            .join(" ");
-        })()
+      ? formatDuration(selectedEvent.start, selectedEvent.end)
       : "";
 
   return (
@@ -104,6 +90,7 @@ export default function EventPopover({
             p={2}
             borderRadius={3}
             sx={{
+              fontFamily: "Inter, sans-serif",
               color: "text.secondary",
               "& .MuiTypography-root": {
                 fontFamily: "Inter, sans-serif",
@@ -117,7 +104,19 @@ export default function EventPopover({
               },
             }}
           >
-            <Stack spacing={2} direction="row" alignItems="center">
+            {selectedEvent.status === "cancelled" && (
+              <div className="text-xs bg-red-100 w-fit px-2 font-medium py-0.5 rounded-full text-red-700 mb-2! capitalize">
+                {selectedEvent.status}
+              </div>
+            )}
+            <Stack
+              spacing={2}
+              direction="row"
+              alignItems="center"
+              {...(selectedEvent.status === "cancelled" && {
+                sx: { textDecoration: "line-through" },
+              })}
+            >
               <CalendarMonthRoundedIcon sx={iconStyle} />
               <Typography>
                 {selectedEvent?.start
@@ -128,7 +127,14 @@ export default function EventPopover({
               </Typography>
             </Stack>
 
-            <Stack spacing={2} direction="row" alignItems="center">
+            <Stack
+              spacing={2}
+              direction="row"
+              alignItems="end"
+              {...(selectedEvent.status === "cancelled" && {
+                sx: { textDecoration: "line-through" },
+              })}
+            >
               <AccessTimeRoundedIcon sx={iconStyle} />
               <Typography>
                 {selectedEvent?.start && selectedEvent?.end
@@ -140,16 +146,16 @@ export default function EventPopover({
               </Typography>
             </Stack>
 
-            {selectedEvent?.modality === "onsite" && selectedEvent?.address && (
+            {selectedEvent?.modality === "in_person" && (
               <Stack spacing={2} useFlexGap direction="row">
                 <PlaceOutlinedIcon sx={iconStyle} />
                 <Box>
                   <Typography component="span">
-                    {selectedEvent.address}
+                    {selectedEvent.location ?? "Not available"}
                   </Typography>
                   <Chip
                     size="small"
-                    label={selectedEvent.modality}
+                    label={selectedEvent.modality.replace("_", "-")}
                     sx={{
                       display: "inline",
                       ml: 1,
@@ -166,13 +172,23 @@ export default function EventPopover({
               </Stack>
             )}
 
-            {selectedEvent?.modality === "remote" && selectedEvent?.link && (
-              <Stack spacing={2} useFlexGap direction="row" alignItems="center">
+            {selectedEvent?.modality === "virtual" && (
+              <Stack spacing={2} useFlexGap direction="row">
                 <InsertLinkRoundedIcon sx={iconStyle} />
                 <Box>
-                  <Link href={selectedEvent.link} target="_blank">
-                    {selectedEvent.link}
-                  </Link>
+                  {selectedEvent.meetingLink ? (
+                    <Link href={selectedEvent.meetingLink} target="_blank">
+                      {selectedEvent.meetingLink}
+                    </Link>
+                  ) : (
+                    <Span
+                      fontStyle="italic"
+                      color="textSecondary"
+                      fontFamily="inherit"
+                    >
+                      Not Available
+                    </Span>
+                  )}
                   <Chip
                     size="small"
                     label={selectedEvent.modality}
@@ -192,7 +208,17 @@ export default function EventPopover({
             )}
           </Stack>
 
-          <Stack direction="row" spacing={1} fontWeight={600}>
+          <Stack direction="row" spacing={1.25} fontWeight={600}>
+            <Button
+              size="small"
+              variant="contained"
+              onClick={() => {
+                openUpdateDrawer(selectedEvent);
+                handleCloseEventPopover();
+              }}
+            >
+              Update
+            </Button>
             <Button
               size="small"
               variant="outlined"
@@ -205,16 +231,6 @@ export default function EventPopover({
             >
               Delete
             </Button>
-            <Button
-              size="small"
-              variant="contained"
-              onClick={() => {
-                openUpdateDrawer(selectedEvent);
-                handleCloseEventPopover();
-              }}
-            >
-              Update
-            </Button>
           </Stack>
 
           {selectedEvent.description && (
@@ -224,7 +240,7 @@ export default function EventPopover({
                 <Typography
                   variant="subtitle1"
                   fontWeight="medium"
-                  fontSize="1.15rem"
+                  fontSize="1.1rem"
                 >
                   Event Details
                 </Typography>
