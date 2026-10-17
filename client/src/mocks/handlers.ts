@@ -142,7 +142,8 @@ export const handlers = [
 
   // Schedules
   http.get("/api/schedules", () => {
-    return HttpResponse.json(schedulesData);
+    // return HttpResponse.json(schedulesData);
+    return passthrough();
   }),
 
   http.post("/api/schedules", async ({ request }) => {
