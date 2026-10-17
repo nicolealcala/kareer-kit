@@ -1,8 +1,5 @@
-import { z } from "zod";
 import { getPreviousWeekday } from "../utils/date.js";
-import { createApplicationSchema } from "../../../validation/application.validation.js";
-
-export type MockApplication = z.infer<typeof createApplicationSchema>;
+import { type CreateApplicationData } from "../../../validation/application.validation.js";
 
 const previousMonday = getPreviousWeekday(0);
 const previousWednesday = getPreviousWeekday(2);
@@ -11,7 +8,7 @@ const previousFriday = getPreviousWeekday(4);
 const today = new Date();
 today.setHours(12, 0, 0, 0);
 
-export const MOCK_APPLICATIONS: MockApplication[] = [
+export const MOCK_APPLICATIONS: CreateApplicationData[] = [
   {
     company: "Accenture",
     position: "Frontend Engineer",

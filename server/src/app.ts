@@ -6,6 +6,7 @@ import { AppError } from "./lib/customErrors.js";
 import verifyToken from "./middleware/authMiddleware.js";
 import cors from "cors";
 import applicationRoutes from "./routes/applicationRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
@@ -29,6 +30,16 @@ app.use(
     credentials: true,
   }),
 );
+app.use((req, _, next) => {
+  console.log(req.method, req.originalUrl);
+  next();
+});
+
+app.get("/", (req, res) => {
+  res
+    .status(200)
+    .json({ status: "healthy", message: "Server is running smoothly" });
+});
 
 app.use("/api/auth", authRoutes(isProduction));
 
@@ -37,6 +48,8 @@ app.use("/api/dashboard", verifyToken(), (req, res) => {
 });
 
 app.use("/api/applications", applicationRoutes(testUserId));
+
+app.use("/api/events", eventRoutes(testUserId));
 
 app.use((req, _, next) => {
   const error = new AppError(`Resource not found: ${req.originalUrl}`, 404);
