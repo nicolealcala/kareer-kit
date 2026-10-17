@@ -39,6 +39,8 @@ export const eventStatus = pgEnum("event_status", [
   "missed",
 ]);
 
+export const eventModality = pgEnum("event_modality", ["virtual", "in_person"]);
+
 export const employmentType = pgEnum("employment_type", [
   "full_time",
   "part_time",

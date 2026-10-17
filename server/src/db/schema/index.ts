@@ -18,11 +18,11 @@ import {
   eventStatus,
   eventType,
   workArrangement,
+  eventModality,
 } from "./enums.js";
 import type {
   ApplicationSource,
   Country,
-  EventLocation,
   JobLocation,
   UserSettings,
 } from "./types.js";
@@ -214,7 +214,9 @@ export const events = pgTable(
       withTimezone: true,
     }),
     isAllDay: boolean("is_all_day").default(false).notNull(),
-    location: jsonb("location").$type<EventLocation>(),
+    modality: eventModality("modality"),
+    location: text("address"),
+    meetingLink: text("meeting_link"),
     ...auditAttributes,
   },
   (table) => [
