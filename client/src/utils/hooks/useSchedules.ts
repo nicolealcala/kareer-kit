@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, keepPreviousData } from "@tanstack/react-query";
 import {
   deleteSchedule,
   getSchedules,
@@ -7,15 +7,44 @@ import {
 import type { ScheduleFormInputs } from "@/lib/schema/scheduleSchema";
 import { showToast } from "@/lib/config/toast";
 import { useQueryClient } from "./useQueryClient";
+import { DateTime } from "luxon";
+import type { View } from "react-big-calendar";
 
-export function useSchedulesData() {
+type UseSchedulesDataProps = {
+  view: View;
+  currentDate: Date;
+};
+
+export function useSchedulesData({
+  view,
+  currentDate,
+}: Partial<UseSchedulesDataProps> = {}) {
   const key = "schedules";
   const { queryClient } = useQueryClient();
 
+  const dateParams = (() => {
+    if (!currentDate || !view) return null;
+    const luxonView =
+      view === "agenda" ? "month" : (view as "day" | "week" | "month");
+    const luxonDate = DateTime.fromJSDate(currentDate);
+
+    return {
+      startDate: luxonDate.startOf(luxonView).toUTC().toISO()!,
+      endDate: luxonDate
+        .plus({ [luxonView]: 1 })
+        .startOf(luxonView)
+        .toUTC()
+        .toISO()!,
+    };
+  })();
+
   // --- GET Query ---
   const query = useQuery({
-    queryKey: [key],
-    queryFn: () => getSchedules(),
+    queryKey: [key, { view, ...dateParams }],
+    queryFn: () => getSchedules(dateParams!.startDate, dateParams!.endDate),
+    enabled: !!dateParams,
+    placeholderData: keepPreviousData,
+    staleTime: 5 * 60 * 1000,
   });
 
   // --- SAVE Mutation (Create or Update) ---
@@ -36,7 +65,7 @@ export function useSchedulesData() {
 
   // --- DELETE Mutation  ---
   const deleteMutation = useMutation({
-    mutationFn: (ids: string[]) => deleteSchedule(ids),
+    mutationFn: ({ id }: { id: string }) => deleteSchedule(id),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [key],
@@ -53,14 +82,15 @@ export function useSchedulesData() {
     // Data & State
     schedules: query.data ?? [],
     isLoading: query.isLoading,
+    isFetching: query.isFetching,
     isError: query.isError,
     error: query.error,
 
     // Actions
-    saveSchedule: saveMutation.mutate,
+    saveSchedule: saveMutation.mutateAsync,
     isSaving: saveMutation.isPending,
 
-    deleteSchedule: deleteMutation.mutate,
+    deleteSchedule: deleteMutation.mutateAsync,
     isDeleting: deleteMutation.isPending,
   };
 }

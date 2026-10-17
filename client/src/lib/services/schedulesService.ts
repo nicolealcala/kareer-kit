@@ -1,10 +1,16 @@
 import { DateTime } from "luxon";
 import type { ScheduleFormInputs } from "../schema/scheduleSchema";
 
-const URL = `${import.meta.env.VITE_BASE_URL}/api/schedules`;
+const URL = `${import.meta.env.VITE_BASE_URL}/api/events`;
 
-export const getSchedules = async () => {
-  const response = await fetch(`${URL}`);
+export const getSchedules = async (startDate: string, endDate: string) => {
+  const response = await fetch(
+    `${URL}?startDate=${startDate}&endDate=${endDate}`,
+    {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    },
+  );
 
   if (!response.ok) throw new Error("Failed to fetch schedules");
 
@@ -23,8 +29,8 @@ export const updateSchedule = async (
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       ...formData,
-      start: DateTime.fromISO(formData.start).toUTC().toISO(),
-      end: DateTime.fromISO(formData.end).toUTC().toISO(),
+      startAt: DateTime.fromISO(formData.start).toUTC().toISO(),
+      endAt: DateTime.fromISO(formData.end).toUTC().toISO(),
     }),
   });
 
@@ -32,11 +38,10 @@ export const updateSchedule = async (
   return await response.json();
 };
 
-export const deleteSchedule = async (ids: string[]) => {
-  const response = await fetch(`${URL}`, {
-    method: "POST",
+export const deleteSchedule = async (id: string) => {
+  const response = await fetch(`${URL}/${id}`, {
+    method: "DELETE",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(ids),
   });
 
   if (!response.ok) throw new Error("Failed to delete");
