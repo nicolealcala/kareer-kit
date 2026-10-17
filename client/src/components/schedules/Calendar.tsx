@@ -21,6 +21,7 @@ import Span from "../shared/typography/Span";
 import { useSchedulesData } from "@/utils/hooks/useSchedules";
 import Box from "@mui/material/Box";
 import { eventColors } from "@/lib/config/colors";
+import { blueGrey } from "@mui/material/colors";
 
 const localizer = luxonLocalizer(DateTime);
 
@@ -30,26 +31,25 @@ type ScheduleCalendarProps = {
 
 function ScheduleCalendar({ events }: ScheduleCalendarProps) {
   const [eventAnchor, setEventAnchor] = useState<HTMLElement | null>(null);
-
   const openConfirmation = useDialogStore((state) => state.openConfirmation);
+
   const {
     selectedEvent,
     view,
-    date,
+    currentDate,
     setSelectedEvent,
     setView,
-    setDate,
+    setCurrentDate,
     openCreateDrawer,
     closeDrawer,
   } = useShallowStore(useScheduleStore, (state) => ({
     selectedEvent: state.selectedEvent,
     setSelectedEvent: state.setSelectedEvent,
     view: state.view,
-    date: state.date,
+    currentDate: state.currentDate,
     setView: state.setView,
-    setDate: state.setDate,
+    setCurrentDate: state.setCurrentDate,
     openCreateDrawer: state.openCreateDrawer,
-    openUpdateDrawer: state.openUpdateDrawer,
     closeDrawer: state.closeDrawer,
   }));
 
@@ -120,34 +120,47 @@ function ScheduleCalendar({ events }: ScheduleCalendarProps) {
       ),
       type: "error",
       icon: "delete",
-      onConfirm: () =>
-        new Promise<void>((resolve, reject) => {
-          deleteSchedule([selectedEvent.id], {
-            onSuccess: () => {
-              closeDrawer();
-              onSuccess();
-              resolve();
-            },
-            onError: reject,
-          });
-        }),
+      onConfirm: async () => {
+        try {
+          await deleteSchedule({ id: selectedEvent.id });
+          closeDrawer();
+          onSuccess();
+        } catch (err) {
+          console.error(err);
+        }
+      },
     });
   }
 
   const eventPropGetter = (event: CalendarEvent) => {
     const eventColor = eventColors[event.type];
+    const duration = event.end.getTime() - event.start.getTime();
+    const isShortEvent = duration <= 30 * 60 * 1000;
+    const isCancelled = event.status === "cancelled";
 
     return {
       style: {
-        "--event-color": eventColor[50],
-        "--event-selected": eventColor[200],
-        "--event-hover-bg": eventColor[100],
-        "--event-focus-outline": eventColor[700],
+        "--event-color": isCancelled ? blueGrey[50] : eventColor[50],
+        "--event-selected": isCancelled ? blueGrey[200] : eventColor[200],
+        "--event-hover-bg": isCancelled ? blueGrey[100] : eventColor[100],
+        "--event-focus-outline": isCancelled ? blueGrey[700] : eventColor[700],
         border: "none",
-        borderLeft: `4px solid ${eventColor[700]}`,
+        borderLeft: `4px solid ${isCancelled ? blueGrey[200] : eventColor[700]}`,
         fontSize: "0.8rem",
         fontWeight: 500,
-        paddingBlock: "6px",
+
+        color: isCancelled ? blueGrey[300] : "var(--mui-palette-text-primary)",
+        ...(isShortEvent
+          ? {
+              display: "flex",
+              alignitems: "center",
+              justifyContent: "center",
+              width: "100%",
+            }
+          : {
+              paddingBlock: "6px",
+            }),
+
         "&:hover": {
           backgroundColor: eventColor[700],
         },
@@ -156,15 +169,23 @@ function ScheduleCalendar({ events }: ScheduleCalendarProps) {
   };
 
   return (
-    <Box bgcolor="background.paper" p={2} borderRadius={3} height="100%">
+    <Box
+      bgcolor="background.paper"
+      p={2}
+      border="1px solid"
+      borderColor="divider"
+      borderRadius={3}
+      height="100%"
+      className="subtle-shadow"
+    >
       <Calendar
         localizer={localizer}
         events={calendarEvents}
         views={[Views.MONTH, Views.WEEK, Views.DAY]}
         view={view}
         onView={setView}
-        date={date}
-        onNavigate={setDate}
+        date={currentDate}
+        onNavigate={setCurrentDate}
         selectable
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
