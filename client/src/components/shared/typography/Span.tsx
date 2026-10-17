@@ -5,9 +5,11 @@ export default function Span({
   fontWeight,
   color,
   variant = "body1",
+  ...props
 }: TypographyProps) {
   return (
     <Typography
+      {...props}
       variant={variant}
       component="span"
       color={color || "initial"}
