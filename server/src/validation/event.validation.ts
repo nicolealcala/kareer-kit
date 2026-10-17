@@ -18,16 +18,6 @@ const validateEventDateConstraints = (
   data: EventDateValidationInput,
   ctx: z.RefinementCtx,
 ) => {
-  const now = new Date();
-
-  if (!data.isAllDay && data.startAt && data.startAt < now) {
-    ctx.addIssue({
-      code: "custom",
-      message: "Event start time cannot be in the past",
-      path: ["startAt"],
-    });
-  }
-
   if (data.startAt && data.endAt != null && data.endAt < data.startAt) {
     ctx.addIssue({
       code: "custom",
@@ -56,7 +46,6 @@ export const createEventSchema = z
 export const updateEventSchema = z
   .object({
     applicationId: z.uuid().nullish(),
-    id: z.string().nonempty(),
     title: requiredTextSchema,
     description: nullableTextSchema,
     type: z.enum(eventType.enumValues).optional(),

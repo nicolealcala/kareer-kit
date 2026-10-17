@@ -34,9 +34,11 @@ export default function eventRoutes(userId: string) {
     "/:id",
     validateRequest("body", updateEventSchema),
     async (req, res) => {
+      const { id: eventId } = resourceParamSchema.parse(req.params);
+
       const data = updateEventSchema.parse(req.body);
 
-      const updatedEvent = await eventService.updateById(userId, data);
+      const updatedEvent = await eventService.updateById(userId, eventId, data);
 
       res.json(updatedEvent);
     },
