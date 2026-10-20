@@ -18,6 +18,8 @@ import Chip from "@mui/material/Chip";
 import { deleteButtonSx } from "@/utils/styles";
 import { formatDuration } from "@/utils/date";
 import Span from "../shared/typography/Span";
+import IconButton from "@mui/material/IconButton";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 type EventPopoverProps = {
   selectedEvent: CalendarEvent | null;
@@ -70,16 +72,29 @@ export default function EventPopover({
     >
       {selectedEvent && (
         <Stack useFlexGap spacing={2} sx={{ p: 2, width: 400 }}>
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography
-              variant="h6"
-              display="flex"
+          <Stack direction="row" justifyContent="space-between" gap={1}>
+            <Stack
+              direction="row"
               alignItems="center"
-              className="line-clamp-1! truncate!"
+              spacing={1}
+              sx={{ minWidth: 0, flex: 1 }}
             >
-              {selectedEvent.title}
-            </Typography>
-            <ScheduleChip label={selectedEvent.type} />
+              <Typography
+                variant="h6"
+                display="flex"
+                alignItems="center"
+                className="line-clamp-1! truncate!"
+              >
+                {selectedEvent.title}
+              </Typography>
+              <ScheduleChip label={selectedEvent.type} />
+            </Stack>
+            <IconButton
+              aria-label="Close popover"
+              onClick={handleCloseEventPopover}
+            >
+              <CloseRoundedIcon />
+            </IconButton>
           </Stack>
 
           <Divider sx={{ mt: -0.5 }} />
@@ -150,8 +165,11 @@ export default function EventPopover({
               <Stack spacing={2} useFlexGap direction="row">
                 <PlaceOutlinedIcon sx={iconStyle} />
                 <Box>
-                  <Typography component="span">
-                    {selectedEvent.location ?? "Not available"}
+                  <Typography
+                    component="span"
+                    fontStyle={selectedEvent.location ? "normal" : "italic"}
+                  >
+                    {selectedEvent.location ?? "Not provided"}
                   </Typography>
                   <Chip
                     size="small"
@@ -186,7 +204,7 @@ export default function EventPopover({
                       color="textSecondary"
                       fontFamily="inherit"
                     >
-                      Not Available
+                      Not provided
                     </Span>
                   )}
                   <Chip
