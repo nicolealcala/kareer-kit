@@ -7,18 +7,13 @@ import {
 import { DateTime } from "luxon";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "@/styles/schedules.scss";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import CustomToolbar, { type CustomToolbarProps } from "./CalendarToolbar";
 import type { CalendarEvent, Schedule } from "@/lib/types/schedules";
 import { toCalendarEvent } from "@/utils/date";
 import { useScheduleStore } from "@/store/schedules/scheduleStore";
 import useShallowStore from "@/store/useShallowStore";
 import Event from "./Event";
-import EventPopover from "./EventPopover";
-import ScheduleForm from "./ScheduleForm";
-import { useDialogStore } from "@/store/dialog/dialogStore";
-import Span from "../shared/typography/Span";
-import { useSchedulesData } from "@/utils/hooks/useSchedules";
 import Box from "@mui/material/Box";
 import { eventColors } from "@/lib/config/colors";
 import { blueGrey } from "@mui/material/colors";
@@ -27,33 +22,25 @@ const localizer = luxonLocalizer(DateTime);
 
 type ScheduleCalendarProps = {
   events: Schedule[];
+  setEventAnchor: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
 };
 
-function ScheduleCalendar({ events }: ScheduleCalendarProps) {
-  const [eventAnchor, setEventAnchor] = useState<HTMLElement | null>(null);
-  const openConfirmation = useDialogStore((state) => state.openConfirmation);
-
+function ScheduleCalendar({ events, setEventAnchor }: ScheduleCalendarProps) {
   const {
-    selectedEvent,
     view,
     currentDate,
     setSelectedEvent,
     setView,
     setCurrentDate,
     openCreateDrawer,
-    closeDrawer,
   } = useShallowStore(useScheduleStore, (state) => ({
-    selectedEvent: state.selectedEvent,
     setSelectedEvent: state.setSelectedEvent,
     view: state.view,
     currentDate: state.currentDate,
     setView: state.setView,
     setCurrentDate: state.setCurrentDate,
     openCreateDrawer: state.openCreateDrawer,
-    closeDrawer: state.closeDrawer,
   }));
-
-  const { deleteSchedule } = useSchedulesData();
 
   const components = useMemo(
     () => ({
@@ -88,10 +75,6 @@ function ScheduleCalendar({ events }: ScheduleCalendarProps) {
     setEventAnchor(e.currentTarget as HTMLElement);
   };
 
-  const handleCloseEventPopover = () => {
-    setEventAnchor(null);
-  };
-
   const handleSelectSlot = ({ start }: SlotInfo) => {
     const createStart = new Date(start);
 
@@ -106,31 +89,6 @@ function ScheduleCalendar({ events }: ScheduleCalendarProps) {
 
     openCreateDrawer(createStart, createEnd);
   };
-
-  function handleDelete(onSuccess: () => void) {
-    if (!selectedEvent) return;
-
-    openConfirmation({
-      title: "Remove this event?",
-      message: (
-        <>
-          <Span>This will permanently delete</Span>&nbsp;
-          <Span fontWeight="semiBold">{selectedEvent.title}</Span>.
-        </>
-      ),
-      type: "error",
-      icon: "delete",
-      onConfirm: async () => {
-        try {
-          await deleteSchedule({ id: selectedEvent.id });
-          closeDrawer();
-          onSuccess();
-        } catch (err) {
-          console.error(err);
-        }
-      },
-    });
-  }
 
   const eventPropGetter = (event: CalendarEvent) => {
     const eventColor = eventColors[event.type];
@@ -198,15 +156,6 @@ function ScheduleCalendar({ events }: ScheduleCalendarProps) {
         max={maxTime}
         scrollToTime={new Date()}
       />
-
-      <EventPopover
-        selectedEvent={selectedEvent}
-        eventAnchor={eventAnchor}
-        handleCloseEventPopover={handleCloseEventPopover}
-        handleDelete={handleDelete}
-      />
-
-      <ScheduleForm handleDelete={handleDelete} />
     </Box>
   );
 }
