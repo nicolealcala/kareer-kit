@@ -42,11 +42,6 @@ const statusSchema = z
 
 const workArrangementSchema = z.enum(["onsite", "remote", "hybrid"]);
 
-const jobSourceSchema = z.object({
-  platform: requiredTextSchema("Please add application source"),
-  url: nullableUrlSchema,
-});
-
 const jobLocationSchema = z.object({
   country: nullableTextSchema,
   countryCode: z
@@ -73,8 +68,14 @@ export const applicationFormSchema = z
 
       return value;
     }),
-    compensationMin: z.coerce.number().nonnegative().optional(),
-    compensationMax: z.coerce.number().nonnegative().optional(),
+    compensationMin: z.preprocess(
+      (v) => (v === "" || v == null ? undefined : v),
+      z.coerce.number().nonnegative().nullish(),
+    ),
+    compensationMax: z.preprocess(
+      (v) => (v === "" || v == null ? undefined : v),
+      z.coerce.number().nonnegative().nullish(),
+    ),
     currency: z
       .string()
       .trim()
@@ -86,7 +87,8 @@ export const applicationFormSchema = z
     status: statusSchema,
     jobDescription: nullableTextSchema,
     notes: nullableTextSchema,
-    source: jobSourceSchema,
+    sourcePlatform: nullableTextSchema,
+    sourceUrl: nullableUrlSchema,
     statusHistory: z
       .array(
         z.object({
@@ -136,7 +138,8 @@ export const appplicationListSchema = z.object({
   status: statusSchema,
   jobDescription: nullableTextSchema,
   notes: nullableTextSchema,
-  source: jobSourceSchema,
+  sourcePlatform: nullableTextSchema,
+  sourceUrl: nullableUrlSchema,
   statusHistory: z
     .array(
       z.object({
@@ -169,7 +172,6 @@ export type ApplicationsBatchCreateFormOutput = z.output<
 
 export type WorkArrangementData = z.infer<typeof workArrangementSchema>;
 export type ApplicationStatusData = z.infer<typeof statusSchema>;
-export type JobSourceData = z.infer<typeof jobSourceSchema>;
 export type JobLocationData = z.infer<typeof jobLocationSchema>;
 export const initialValues: ApplicationFormData = {
   company: "",
@@ -177,13 +179,14 @@ export const initialValues: ApplicationFormData = {
   employmentType: undefined,
   workArrangement: undefined,
   location: null,
-  compensationMin: undefined,
-  compensationMax: undefined,
+  compensationMin: null,
+  compensationMax: null,
   currency: null,
   payFrequency: "monthly",
   appliedAt: new Date().toISOString(),
   status: "applied",
   jobDescription: null,
   notes: null,
-  source: { platform: "", url: null },
+  sourcePlatform: null,
+  sourceUrl: null,
 };
