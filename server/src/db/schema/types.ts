@@ -10,11 +10,6 @@ export type JobLocation = {
   city?: string | null | undefined;
 };
 
-export type ApplicationSource = {
-  platform: string;
-  url?: string | null | undefined;
-};
-
 export type EventLocation =
   | {
       type: "online";

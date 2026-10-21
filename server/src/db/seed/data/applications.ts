@@ -29,10 +29,8 @@ export const MOCK_APPLICATIONS: CreateApplicationData[] = [
     jobDescription:
       "Develop and maintain React applications for enterprise clients.",
     notes: "Applied through company careers page.",
-    source: {
-      platform: "company-website",
-      url: "https://www.accenture.com/ph-en/careers",
-    },
+    sourcePlatform: "company-website",
+    sourceUrl: "https://www.accenture.com/ph-en/careers",
   },
   {
     company: "IBM",
@@ -53,10 +51,8 @@ export const MOCK_APPLICATIONS: CreateApplicationData[] = [
     appliedAt: previousWednesday,
     jobDescription: "Build AI-powered internal tools and backend services.",
     notes: "Recruiter reached out via LinkedIn.",
-    source: {
-      platform: "linkedin",
-      url: "https://www.linkedin.com/jobs/",
-    },
+    sourcePlatform: "linkedin",
+    sourceUrl: "https://www.linkedin.com/jobs/",
   },
   {
     company: "Rollstack",
@@ -76,10 +72,8 @@ export const MOCK_APPLICATIONS: CreateApplicationData[] = [
     appliedAt: previousWednesday,
     jobDescription: null,
     notes: null,
-    source: {
-      platform: "wellfound",
-      url: "https://wellfound.com",
-    },
+    sourcePlatform: "wellfound",
+    sourceUrl: "https://wellfound.com",
   },
   {
     company: "Canva",
@@ -100,10 +94,8 @@ export const MOCK_APPLICATIONS: CreateApplicationData[] = [
     appliedAt: previousFriday,
     jobDescription: null,
     notes: "Received rejection after technical assessment.",
-    source: {
-      platform: "company-website",
-      url: "https://www.canva.com/careers/",
-    },
+    sourcePlatform: "company-website",
+    sourceUrl: "https://www.canva.com/careers/",
   },
   {
     company: "Vercel",
@@ -120,9 +112,7 @@ export const MOCK_APPLICATIONS: CreateApplicationData[] = [
     jobDescription:
       "Work on developer-facing features across the Vercel platform.",
     notes: null,
-    source: {
-      platform: "company-website",
-      url: "https://vercel.com/careers",
-    },
+    sourcePlatform: "company-website",
+    sourceUrl: "https://vercel.com/careers",
   },
 ];

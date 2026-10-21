@@ -28,11 +28,6 @@ export const jobLocationSchema = z.object({
   city: nullableTextSchema,
 });
 
-export const applicationSourceSchema = z.object({
-  platform: requiredTextSchema,
-  url: nullableUrlSchema,
-});
-
 export const eventLocationSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("online"), link: nullableUrlSchema }),
   z.object({

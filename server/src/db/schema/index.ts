@@ -10,6 +10,7 @@ import {
   primaryKey,
   index,
   check,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import {
   applicationStatus,
@@ -20,12 +21,7 @@ import {
   workArrangement,
   eventModality,
 } from "./enums.js";
-import type {
-  ApplicationSource,
-  Country,
-  JobLocation,
-  UserSettings,
-} from "./types.js";
+import type { Country, JobLocation, UserSettings } from "./types.js";
 import { auditAttributes } from "./columns.helper.js";
 import { sql } from "drizzle-orm";
 
@@ -102,14 +98,15 @@ export const applications = pgTable(
     currency: char({ length: 3 }),
     payFrequency: payFrequency("pay_frequency"),
     status: applicationStatus("status").default("applied").notNull(),
+    jobDescription: text("job_description"),
+    notes: text("notes"),
+    sourcePlatform: text("source_platform"),
+    sourceUrl: text("source_url"),
     appliedAt: timestamp("applied_at", {
       withTimezone: true,
     })
       .defaultNow()
       .notNull(),
-    jobDescription: text("job_description"),
-    notes: text("notes"),
-    source: jsonb("source").$type<ApplicationSource>(),
     ...auditAttributes,
   },
   (table) => [
@@ -128,6 +125,9 @@ export const applications = pgTable(
       OR ${table.compensationMax} IS NULL 
       OR ${table.compensationMin} <= ${table.compensationMax}`,
     ),
+    uniqueIndex("applications_user_source_url_unique")
+      .on(table.userId, table.sourceUrl)
+      .where(sql`${table.sourceUrl} IS NOT NULL`),
   ],
 );
 
