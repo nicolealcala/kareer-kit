@@ -59,11 +59,11 @@ export default function applicationRoutes(userId: string) {
     validateRequest("body", updateApplicationSchema),
     async (req, res) => {
       const data = updateApplicationSchema.parse(req.body);
-      const params = resourceParamSchema.parse(req.params);
+      const { id } = resourceParamSchema.parse(req.params);
 
       const updatedApplication = await applicationService.updateById(
         userId,
-        params.id,
+        id,
         data,
       );
 
