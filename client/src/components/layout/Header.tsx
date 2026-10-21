@@ -65,8 +65,8 @@ export default function Header({
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Box component="div" sx={{ display: "flex", alignItems: "center" }}>
           <IconButton
+            aria-label="Open sidebar"
             color="default"
-            aria-label="open drawer"
             onClick={open ? handleDrawerClose : handleDrawerOpen}
             edge="start"
             sx={[
@@ -87,7 +87,7 @@ export default function Header({
         </Box>
 
         <Box component="div" className="space-x-3!">
-          <IconButton aria-label="notifications button" size="large">
+          <IconButton aria-label="Open notifications" size="large">
             <Badge color="secondary" badgeContent={1} overlap="circular">
               <NotificationsNoneRoundedIcon fontSize="medium" />
             </Badge>

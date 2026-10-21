@@ -2,7 +2,6 @@ import { Router } from "express";
 import ApplicationService from "../services/application.service.js";
 import {
   applicationListQuerySchema,
-  createApplicationSchema,
   createManyApplicationsSchema,
   updateApplicationSchema,
 } from "../validation/application.validation.js";
@@ -11,7 +10,6 @@ import {
   requiredTextArraySchema,
   resourceParamSchema,
 } from "../validation/common.validation.js";
-import { AppError } from "../lib/customErrors.js";
 
 const applicationRouter = Router();
 const applicationService = new ApplicationService();

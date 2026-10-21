@@ -50,7 +50,7 @@ const FloatingMenu = forwardRef<HTMLDivElement, FloatingMenuProps>(
       {
         key: "add",
         icon: <AddCircleRoundedIcon />,
-        label: "Add new item",
+        label: "Add new application",
         onClick: handleAdd,
       },
       {
@@ -72,7 +72,7 @@ const FloatingMenu = forwardRef<HTMLDivElement, FloatingMenuProps>(
       {
         key: "delete",
         icon: <TrashIcon />,
-        label: "Remove item",
+        label: "Remove application",
         onClick: handleDelete,
       },
     ];

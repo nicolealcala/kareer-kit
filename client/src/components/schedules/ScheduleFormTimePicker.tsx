@@ -4,23 +4,35 @@ import {
   TimePicker,
   type TimePickerProps,
 } from "@mui/x-date-pickers/TimePicker";
-import type { ControllerRenderProps, FieldPath } from "react-hook-form";
+import type {
+  Control,
+  ControllerRenderProps,
+  FieldPath,
+  FieldPathValue,
+  FieldValues,
+} from "react-hook-form";
 import type { ScheduleFormInputs } from "@/lib/schema/scheduleSchema";
 import { DateTime } from "luxon";
-import { type Control, useWatch } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 import type { TimeView } from "@mui/x-date-pickers/models";
 import React from "react";
 
-type ScheduleFormTimePickerProps<TName extends FieldPath<ScheduleFormInputs>> =
-  Omit<TimePickerProps, "name"> & {
-    field: ControllerRenderProps<ScheduleFormInputs, TName>;
-    errorMessage?: string;
-    error: boolean;
-    baseDate?: string;
-  };
+type StringFieldPath<T extends FieldValues> = {
+  [K in FieldPath<T>]: FieldPathValue<T, K> extends string | undefined
+    ? K
+    : never;
+}[FieldPath<T>];
 
+type ScheduleFormTimePickerProps<
+  TName extends StringFieldPath<ScheduleFormInputs>,
+> = Omit<TimePickerProps, "name" | "value" | "onChange"> & {
+  field: ControllerRenderProps<ScheduleFormInputs, TName>;
+  errorMessage?: string;
+  error: boolean;
+  baseDate?: string;
+};
 export default function ScheduleFormTimePicker<
-  TName extends FieldPath<ScheduleFormInputs>,
+  TName extends StringFieldPath<ScheduleFormInputs>,
 >({
   field,
   errorMessage,
@@ -74,14 +86,15 @@ export default function ScheduleFormTimePicker<
   );
 }
 
-type DependentTimePickerProps<TName extends FieldPath<ScheduleFormInputs>> =
-  Omit<ScheduleFormTimePickerProps<TName>, "minTime"> & {
-    control: Control<ScheduleFormInputs>;
-    watchName: FieldPath<ScheduleFormInputs>;
-  };
+type DependentTimePickerProps<
+  TName extends StringFieldPath<ScheduleFormInputs>,
+> = Omit<ScheduleFormTimePickerProps<TName>, "minTime"> & {
+  control: Control<ScheduleFormInputs>;
+  watchName: StringFieldPath<ScheduleFormInputs>;
+};
 
 function DependentTimePickerComponent<
-  TName extends FieldPath<ScheduleFormInputs>,
+  TName extends StringFieldPath<ScheduleFormInputs>,
 >({ field, control, watchName, ...props }: DependentTimePickerProps<TName>) {
   const watchedValue = useWatch({
     control,

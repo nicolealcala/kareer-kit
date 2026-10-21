@@ -34,7 +34,11 @@ export default function AvatarMenu() {
 
   return (
     <>
-      <IconButton onClick={handleOpen} sx={{ p: 0.5 }}>
+      <IconButton
+        aria-label="Open account settings dropdown"
+        onClick={handleOpen}
+        sx={{ p: 0.5 }}
+      >
         <Avatar
           alt="User Image"
           src="https://mockmind-api.uifaces.co/content/human/80.jpg"

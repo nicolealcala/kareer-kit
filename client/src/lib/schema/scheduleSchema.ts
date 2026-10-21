@@ -7,12 +7,13 @@ const scheduleFormSchema = z
     title: requiredTextSchema("Please add an event title"),
     description: nullableTextSchema,
     date: requiredTextSchema("Please add a date"),
+    isAllDay: z.boolean(),
     start: requiredTextSchema("Please add a start time"),
     end: requiredTextSchema("Please add an end time"),
     type: z
       .enum(["interview", "assessment", "task", "other"])
       .nonoptional("Type is required"),
-    modality: z.enum(["onsite", "remote"]),
+    modality: z.enum(["virtual", "in_person"]),
     link: z.string().optional(),
     address: z.string().optional(),
   })
@@ -33,11 +34,12 @@ export type ScheduleFormInputs = z.infer<typeof scheduleFormSchema>;
 export const initialValues: ScheduleFormInputs = {
   title: "",
   description: "",
-  date: "",
+  date: DateTime.now().toISO()!,
+  isAllDay: false,
   start: "",
   end: "",
   type: "interview",
-  modality: "remote",
+  modality: "virtual",
   link: "",
   address: "",
 };

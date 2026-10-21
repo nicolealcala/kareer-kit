@@ -66,6 +66,14 @@
   display: none;
 }
 
+.rbc-event-content {
+  min-width: 0;
+  max-height: fit-content;
+  line-height: 1;
+  overflow: hidden;
+  width: 100%;
+}
+
 .rbc-today {
   background-color: #f5f3ff;
 }

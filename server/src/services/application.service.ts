@@ -1,9 +1,5 @@
 import { db } from "../db/index.js";
-import {
-  users,
-  applications,
-  applicationStatusHistory,
-} from "../db/schema/index.js";
+import { applications, applicationStatusHistory } from "../db/schema/index.js";
 import {
   and,
   asc,
@@ -25,7 +21,7 @@ import type {
 import type { RequiredTextData } from "../validation/common.validation.js";
 import { AppError } from "../lib/customErrors.js";
 
-class ApplicationService {
+export default class ApplicationService {
   createOne(userId: RequiredTextData, data: CreateApplicationData) {
     return db.transaction(async (tx) => {
       const [newApplication] = await tx
@@ -236,5 +232,3 @@ class ApplicationService {
     return { conditions, sortColumn, offset };
   }
 }
-
-export default ApplicationService;

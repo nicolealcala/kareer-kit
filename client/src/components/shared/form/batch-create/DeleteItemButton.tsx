@@ -9,8 +9,7 @@ export default function DeleteItem({ onRemove }: DeleteItemButtonProps) {
   const openConfirmation = useDialogStore((state) => state.openConfirmation);
   return (
     <IconButton
-      type="button"
-      aria-label="Remove item"
+      aria-label="Delete item"
       onClick={(event) => {
         event.stopPropagation();
         openConfirmation({

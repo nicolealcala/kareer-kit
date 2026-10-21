@@ -33,6 +33,7 @@ export default function RowActions({
   return (
     <Stack direction="row" spacing={0.5} maxWidth="fit-content">
       <IconButton
+        aria-label="Toggle expand row"
         size="small"
         onClick={() => row.toggleExpanded()}
         disabled={!row.original.jobDescription || row.getIsSelected()}
@@ -45,6 +46,7 @@ export default function RowActions({
       </IconButton>
 
       <IconButton
+        aria-label="Edit item"
         size="small"
         disabled={row.getIsSelected()}
         onClick={(e) => {
@@ -57,6 +59,7 @@ export default function RowActions({
       </IconButton>
 
       <IconButton
+        aria-label="Open link in a new tab"
         size="small"
         href={row.original.source?.url ?? "#"}
         target="_blank"
@@ -67,6 +70,7 @@ export default function RowActions({
       </IconButton>
 
       <IconButton
+        aria-label="Delete item"
         size="small"
         disabled={row.getIsSelected()}
         onClick={(e) => {

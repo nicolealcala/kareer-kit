@@ -1,23 +1,33 @@
-export type ScheduleType = "interview" | "assessment" | "task" | "other";
+export type ScheduleType =
+  | "meeting"
+  | "interview"
+  | "assessment"
+  | "task"
+  | "other";
+
+export type ScheduleStatus = "scheduled" | "cancelled" | "completed" | "missed";
+
 export type Modality = "remote" | "onsite";
 
 interface BaseSchedule {
-  id: string | undefined;
+  id: string;
   title: string;
-  description?: string;
+  status: ScheduleStatus;
+  description?: string | null;
   type: ScheduleType;
-  start: string;
-  end: string;
+  startAt: string;
+  endAt: string | null;
+  isAllDay: boolean;
 }
 
 export interface RemoteSchedule extends BaseSchedule {
-  modality: "remote";
-  link: string;
+  modality: "virtual";
+  meetingLink: string;
 }
 
 export interface OnsiteSchedule extends BaseSchedule {
-  modality: "onsite";
-  address?: string;
+  modality: "in_person";
+  location?: string | null;
 }
 
 export type Schedule = RemoteSchedule | OnsiteSchedule;
@@ -31,20 +41,24 @@ export type Schedule = RemoteSchedule | OnsiteSchedule;
 
 export type RemoteCalendarEvent = Omit<
   RemoteSchedule,
-  "id" | "start" | "end"
+  "id" | "start" | "end" | "isAllDay"
 > & {
   id: string;
   start: Date;
   end: Date;
+  allDay: boolean;
+  isShortEvent: boolean;
 };
 
 export type OnsiteCalendarEvent = Omit<
   OnsiteSchedule,
-  "id" | "start" | "end"
+  "id" | "start" | "end" | "isAllDay"
 > & {
   id: string;
   start: Date;
   end: Date;
+  allDay: boolean;
+  isShortEvent: boolean;
 };
 
 export type CalendarEvent = RemoteCalendarEvent | OnsiteCalendarEvent;

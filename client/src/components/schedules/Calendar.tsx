@@ -7,53 +7,40 @@ import {
 import { DateTime } from "luxon";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "@/styles/schedules.scss";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import CustomToolbar, { type CustomToolbarProps } from "./CalendarToolbar";
 import type { CalendarEvent, Schedule } from "@/lib/types/schedules";
 import { toCalendarEvent } from "@/utils/date";
 import { useScheduleStore } from "@/store/schedules/scheduleStore";
 import useShallowStore from "@/store/useShallowStore";
 import Event from "./Event";
-import EventPopover from "./EventPopover";
-import ScheduleForm from "./ScheduleForm";
-import { useDialogStore } from "@/store/dialog/dialogStore";
-import Span from "../shared/typography/Span";
-import { useSchedulesData } from "@/utils/hooks/useSchedules";
 import Box from "@mui/material/Box";
 import { eventColors } from "@/lib/config/colors";
+import { blueGrey } from "@mui/material/colors";
 
 const localizer = luxonLocalizer(DateTime);
 
 type ScheduleCalendarProps = {
   events: Schedule[];
+  setEventAnchor: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
 };
 
-function ScheduleCalendar({ events }: ScheduleCalendarProps) {
-  const [eventAnchor, setEventAnchor] = useState<HTMLElement | null>(null);
-
-  const openConfirmation = useDialogStore((state) => state.openConfirmation);
+function ScheduleCalendar({ events, setEventAnchor }: ScheduleCalendarProps) {
   const {
-    selectedEvent,
     view,
-    date,
+    currentDate,
     setSelectedEvent,
     setView,
-    setDate,
+    setCurrentDate,
     openCreateDrawer,
-    closeDrawer,
   } = useShallowStore(useScheduleStore, (state) => ({
-    selectedEvent: state.selectedEvent,
     setSelectedEvent: state.setSelectedEvent,
     view: state.view,
-    date: state.date,
+    currentDate: state.currentDate,
     setView: state.setView,
-    setDate: state.setDate,
+    setCurrentDate: state.setCurrentDate,
     openCreateDrawer: state.openCreateDrawer,
-    openUpdateDrawer: state.openUpdateDrawer,
-    closeDrawer: state.closeDrawer,
   }));
-
-  const { deleteSchedule } = useSchedulesData();
 
   const components = useMemo(
     () => ({
@@ -88,10 +75,6 @@ function ScheduleCalendar({ events }: ScheduleCalendarProps) {
     setEventAnchor(e.currentTarget as HTMLElement);
   };
 
-  const handleCloseEventPopover = () => {
-    setEventAnchor(null);
-  };
-
   const handleSelectSlot = ({ start }: SlotInfo) => {
     const createStart = new Date(start);
 
@@ -107,47 +90,35 @@ function ScheduleCalendar({ events }: ScheduleCalendarProps) {
     openCreateDrawer(createStart, createEnd);
   };
 
-  function handleDelete(onSuccess: () => void) {
-    if (!selectedEvent) return;
-
-    openConfirmation({
-      title: "Remove this event?",
-      message: (
-        <>
-          <Span>This will permanently delete</Span>&nbsp;
-          <Span fontWeight="semiBold">{selectedEvent.title}</Span>.
-        </>
-      ),
-      type: "error",
-      icon: "delete",
-      onConfirm: () =>
-        new Promise<void>((resolve, reject) => {
-          deleteSchedule([selectedEvent.id], {
-            onSuccess: () => {
-              closeDrawer();
-              onSuccess();
-              resolve();
-            },
-            onError: reject,
-          });
-        }),
-    });
-  }
-
   const eventPropGetter = (event: CalendarEvent) => {
     const eventColor = eventColors[event.type];
+    const duration = event.end.getTime() - event.start.getTime();
+    const isShortEvent = duration <= 30 * 60 * 1000;
+    const isCancelled = event.status === "cancelled";
 
     return {
       style: {
-        "--event-color": eventColor[50],
-        "--event-selected": eventColor[200],
-        "--event-hover-bg": eventColor[100],
-        "--event-focus-outline": eventColor[700],
+        "--event-color": isCancelled ? blueGrey[50] : eventColor[50],
+        "--event-selected": isCancelled ? blueGrey[200] : eventColor[200],
+        "--event-hover-bg": isCancelled ? blueGrey[100] : eventColor[100],
+        "--event-focus-outline": isCancelled ? blueGrey[700] : eventColor[700],
         border: "none",
-        borderLeft: `4px solid ${eventColor[700]}`,
+        borderLeft: `4px solid ${isCancelled ? blueGrey[200] : eventColor[700]}`,
         fontSize: "0.8rem",
         fontWeight: 500,
-        paddingBlock: "6px",
+
+        color: isCancelled ? blueGrey[300] : "var(--mui-palette-text-primary)",
+        ...(isShortEvent
+          ? {
+              display: "flex",
+              alignitems: "center",
+              justifyContent: "center",
+              width: "100%",
+            }
+          : {
+              paddingBlock: "6px",
+            }),
+
         "&:hover": {
           backgroundColor: eventColor[700],
         },
@@ -156,15 +127,23 @@ function ScheduleCalendar({ events }: ScheduleCalendarProps) {
   };
 
   return (
-    <Box bgcolor="background.paper" p={2} borderRadius={3} height="100%">
+    <Box
+      bgcolor="background.paper"
+      p={2}
+      border="1px solid"
+      borderColor="divider"
+      borderRadius={3}
+      height="100%"
+      className="subtle-shadow"
+    >
       <Calendar
         localizer={localizer}
         events={calendarEvents}
         views={[Views.MONTH, Views.WEEK, Views.DAY]}
         view={view}
         onView={setView}
-        date={date}
-        onNavigate={setDate}
+        date={currentDate}
+        onNavigate={setCurrentDate}
         selectable
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
@@ -177,15 +156,6 @@ function ScheduleCalendar({ events }: ScheduleCalendarProps) {
         max={maxTime}
         scrollToTime={new Date()}
       />
-
-      <EventPopover
-        selectedEvent={selectedEvent}
-        eventAnchor={eventAnchor}
-        handleCloseEventPopover={handleCloseEventPopover}
-        handleDelete={handleDelete}
-      />
-
-      <ScheduleForm handleDelete={handleDelete} />
     </Box>
   );
 }

@@ -19,7 +19,20 @@ export default function Event({
         setSelectedEvent(event);
         setEventAnchor(e.currentTarget);
       }}
-      color="text.primary"
+      sx={
+        event?.isShortEvent
+          ? {
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+            }
+          : {
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: 2,
+              overflow: "hidden",
+            }
+      }
     >
       {event?.title}
     </Box>

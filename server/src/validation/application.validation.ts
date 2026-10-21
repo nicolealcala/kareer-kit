@@ -49,6 +49,7 @@ export const createApplicationSchema = z
 export const createManyApplicationsSchema = z
   .array(createApplicationSchema)
   .min(1);
+  
 export const updateApplicationSchema = z
   .object({
     company: requiredTextSchema.optional(),

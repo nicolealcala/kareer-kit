@@ -36,7 +36,7 @@ export default function PasswordField({
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
-                aria-label="toggle password visibility"
+                aria-label="Toggle password visibility"
                 onClick={handleClickShowPassword}
                 edge="end"
               >

@@ -11,7 +11,7 @@ type ScheduleUIState = {
   createStart: Date | null;
   createEnd: Date | null;
   view: View;
-  date: Date;
+  currentDate: Date;
 };
 
 const getInitialState = (): ScheduleUIState => ({
@@ -20,14 +20,14 @@ const getInitialState = (): ScheduleUIState => ({
   createStart: null,
   createEnd: null,
   view: Views.WEEK,
-  date: new Date(),
+  currentDate: new Date(),
 });
 
 export const useScheduleStore = create(
   combine(getInitialState(), (set) => ({
     setView: (view: View) => set({ view }),
 
-    setDate: (date: Date) => set({ date: new Date(date) }),
+    setCurrentDate: (date: Date) => set({ currentDate: new Date(date) }),
     setSelectedEvent: (event: CalendarEvent | null) =>
       set({ selectedEvent: event }),
     openViewDrawer: (event: CalendarEvent) => {
@@ -48,7 +48,7 @@ export const useScheduleStore = create(
       set({
         drawerMode: "update",
         selectedEvent: event,
-        date: new Date(event.start),
+        currentDate: new Date(event.start),
       });
     },
     closeDrawer: () =>
@@ -58,5 +58,7 @@ export const useScheduleStore = create(
         createStart: null,
         createEnd: null,
       }),
+
+    resetUI: () => set(getInitialState()),
   })),
 );
