@@ -6,10 +6,10 @@ import {
   workArrangement,
 } from "../db/schema/enums.js";
 import {
-  applicationSourceSchema,
   arrayQueryParam,
   jobLocationSchema,
   nullableTextSchema,
+  nullableUrlSchema,
   requiredTextSchema,
 } from "./common.validation.js";
 
@@ -20,8 +20,14 @@ export const createApplicationSchema = z
     employmentType: z.enum(employmentType.enumValues).nullish(),
     workArrangement: z.enum(workArrangement.enumValues).nullish(),
     location: jobLocationSchema.nullish(),
-    compensationMin: z.coerce.number().nonnegative().nullish(),
-    compensationMax: z.coerce.number().nonnegative().nullish(),
+    compensationMin: z.preprocess(
+      (v) => (v === "" || v == null ? undefined : v),
+      z.coerce.number().nonnegative().nullish(),
+    ),
+    compensationMax: z.preprocess(
+      (v) => (v === "" || v == null ? undefined : v),
+      z.coerce.number().nonnegative().nullish(),
+    ),
     currency: z
       .string()
       .trim()
@@ -33,7 +39,8 @@ export const createApplicationSchema = z
     status: z.enum(applicationStatus.enumValues).optional(),
     jobDescription: nullableTextSchema,
     notes: nullableTextSchema,
-    source: applicationSourceSchema.nullish(),
+    sourcePlatform: nullableTextSchema,
+    sourceUrl: nullableUrlSchema,
   })
   .refine(
     (data) =>
@@ -49,7 +56,7 @@ export const createApplicationSchema = z
 export const createManyApplicationsSchema = z
   .array(createApplicationSchema)
   .min(1);
-  
+
 export const updateApplicationSchema = z
   .object({
     company: requiredTextSchema.optional(),
@@ -57,8 +64,14 @@ export const updateApplicationSchema = z
     employmentType: z.enum(employmentType.enumValues).nullish(),
     workArrangement: z.enum(workArrangement.enumValues).nullish(),
     location: jobLocationSchema.nullish(),
-    compensationMin: z.coerce.number().nonnegative().nullish(),
-    compensationMax: z.coerce.number().nonnegative().nullish(),
+    compensationMin: z.preprocess(
+      (v) => (v === "" || v == null ? undefined : v),
+      z.coerce.number().nonnegative().nullish(),
+    ),
+    compensationMax: z.preprocess(
+      (v) => (v === "" || v == null ? undefined : v),
+      z.coerce.number().nonnegative().nullish(),
+    ),
     currency: z
       .string()
       .trim()
@@ -70,7 +83,8 @@ export const updateApplicationSchema = z
     status: z.enum(applicationStatus.enumValues).optional(),
     jobDescription: nullableTextSchema,
     notes: nullableTextSchema,
-    source: applicationSourceSchema.nullish(),
+    sourcePlatform: nullableTextSchema,
+    sourceUrl: nullableUrlSchema,
   })
   .superRefine((data, ctx) => {
     if (Object.keys(data).length === 0)

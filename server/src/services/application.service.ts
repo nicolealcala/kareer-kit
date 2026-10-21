@@ -22,27 +22,6 @@ import type { RequiredTextData } from "../validation/common.validation.js";
 import { AppError } from "../lib/customErrors.js";
 
 export default class ApplicationService {
-  createOne(userId: RequiredTextData, data: CreateApplicationData) {
-    return db.transaction(async (tx) => {
-      const [newApplication] = await tx
-        .insert(applications)
-        .values({ ...data, userId })
-        .returning();
-
-      if (!newApplication) {
-        throw new AppError("Failed to create application", 500);
-      }
-
-      await tx.insert(applicationStatusHistory).values({
-        applicationId: newApplication.id,
-        status: newApplication.status,
-        notes: newApplication.notes,
-      });
-
-      return newApplication;
-    });
-  }
-
   createMany(userId: RequiredTextData, data: CreateApplicationData[]) {
     return db.transaction(async (tx) => {
       const newApplications = await tx
@@ -136,18 +115,6 @@ export default class ApplicationService {
     });
   }
 
-  // deleteById(userId: RequiredTextData, applicationId: RequiredTextData) {
-  //   return db
-  //     .delete(applications)
-  //     .where(
-  //       and(
-  //         eq(applications.id, applicationId),
-  //         eq(applications.userId, userId),
-  //       ),
-  //     )
-  //     .returning();
-  // }
-
   delete(userId: RequiredTextData, applicationIds: RequiredTextData[]) {
     return db
       .delete(applications)
@@ -223,7 +190,7 @@ export default class ApplicationService {
       workArrangement: applications.workArrangement,
       status: applications.status,
       location: sql`${applications.location}->>'countryCode'`,
-      source: sql`${applications.source}->>'platform'`,
+      source: applications.sourcePlatform,
     };
 
     const sortColumn = sortColumns[sortBy];

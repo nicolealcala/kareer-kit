@@ -1,6 +1,4 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import RowSourceLink from "./RowSourceLink";
-import { cn } from "@/utils/tailwind";
 import Chip from "@mui/material/Chip";
 import RowSalaryRange from "./RowSalaryRange";
 import RowStatusSelection from "./RowStatusSelection";
@@ -67,6 +65,22 @@ export const getColumns = () => [
   }),
   columnHelper.accessor("position", {
     header: "Position",
+    cell: (info) => {
+      const { sourceUrl, position } = info.row.original;
+
+      if (sourceUrl)
+        return (
+          <a
+            aria-label="External link to job post"
+            href={sourceUrl}
+            target="_blank"
+            className="group text-primary hover:underline underline-offset-3"
+          >
+            {position}
+          </a>
+        );
+      else return position;
+    },
   }),
   columnHelper.accessor("company", {
     header: "Company",
@@ -119,10 +133,6 @@ export const getColumns = () => [
       );
     },
   }),
-  // columnHelper.accessor("source", {
-  //   header: "Source",
-  //   cell: (info) => <RowSourceLink source={info.getValue()} />,
-  // }),
   columnHelper.accessor("status", {
     header: "Status",
     cell: ({ getValue, row }) => {

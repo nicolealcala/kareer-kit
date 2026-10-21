@@ -59,17 +59,6 @@ export default function RowActions({
       </IconButton>
 
       <IconButton
-        aria-label="Open link in a new tab"
-        size="small"
-        href={row.original.source?.url ?? "#"}
-        target="_blank"
-        disabled={!row.original.source?.url}
-        sx={actionButtonStyle}
-      >
-        <OpenInNewRoundedIcon sx={actionIconStyle} />
-      </IconButton>
-
-      <IconButton
         aria-label="Delete item"
         size="small"
         disabled={row.getIsSelected()}

@@ -190,7 +190,7 @@ export default function ApplicationForm<TFieldValues extends FieldValues>({
           {/* Source Platform Field*/}
           <Box sx={{ flex: 1 }}>
             <ControlledFormSelect
-              name={field("source.platform")}
+              name={field("sourcePlatform")}
               control={control}
               label="Platform"
               items={platformOptions}
@@ -201,7 +201,7 @@ export default function ApplicationForm<TFieldValues extends FieldValues>({
           {/* Source Link Field*/}
           <Box sx={{ flex: 2 }}>
             <ControlledFormTextField
-              name={field("source.url")}
+              name={field("sourceUrl")}
               control={control}
               label="Link"
               placeholder="Link"
